@@ -45,6 +45,8 @@ jobs:
         # Uploads the compiled assets from the 'dist' folder
         uses: actions/upload-pages-artifact@v3
         with:
+          # Explicitly name the artifact so 'deploy-pages' can find it.
+          name: github-pages
           path: './dist' # IMPORTANT: Vite defaults to 'dist' as the output folder
 
   # 2. Deploy Job: Takes the uploaded artifact and publishes it
