@@ -192,7 +192,7 @@ const Home: React.FC = () => {
                         {[
                             { label: 'Games', sub: 'Explore titles', icon: Gamepad2, path: '/games', color: 'text-green-500' },
                             { label: 'Subsidiaries', sub: 'The Teams', icon: Network, path: '/subsidiaries', color: 'text-purple-500' },
-                            { label: 'Partners', sub: 'Collaborators', icon: Users, path: '/partners', color: 'text-green-500' }
+                            { label: 'Partners', sub: 'Collaborators', icon: Users, path: '/partners', color: 'text-blue-500' }
                         ].map((link, idx) => (
                             <motion.div 
                                 key={idx}
