@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -16,9 +18,22 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
+    "@types/node": "^22.19.1",
     "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
+    "typescript": "^5.8.3",
     "vite": "^6.2.0"
-  }
+  },
+  "description": "This repository contains the source code for the official Left-Sided Studios informational website. The site serves as a central hub for showcasing our core games, outlining our subsidiaries, listing our partners, and providing essential contact information. The website is designed as a single-page application (SPA) built using modern web standards (HTML, Tailwind CSS, and vanilla JavaScript) for speed and simplicity.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leftsideddev/web.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leftsideddev/web/issues"
+  },
+  "homepage": "https://github.com/leftsideddev/web#readme"
 }
