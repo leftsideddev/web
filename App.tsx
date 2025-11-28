@@ -1,8 +1,8 @@
 import React, { useState, useEffect, createContext, useContext, useRef, useMemo } from 'react';
-import { HashRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { MemoryRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
     Menu, Sun, Moon, ArrowLeft, Gamepad2, Network, 
-    Users, Mail, Monitor, MessageSquareText, Globe, Search, X, ChevronRight, Star, Newspaper, Youtube, Twitter, Zap, User, ExternalLink, CheckCircle
+    Users, Mail, Monitor, MessageSquareText, Globe, Search, X, ChevronRight
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -417,7 +417,7 @@ const AnimatedRoutes: React.FC = () => {
 const App: React.FC = () => {
     return (
         <ThemeProvider>
-            <HashRouter>
+            <MemoryRouter>
                 <div className="min-h-screen flex flex-col font-sans selection:bg-blue-500 selection:text-white">
                     <Navbar />
                     <main className="flex-grow pt-24 pb-20 px-6 max-w-7xl mx-auto w-full">
@@ -425,7 +425,7 @@ const App: React.FC = () => {
                     </main>
                     <Footer />
                 </div>
-            </HashRouter>
+            </MemoryRouter>
         </ThemeProvider>
     );
 };
