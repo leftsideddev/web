@@ -204,7 +204,7 @@ export const db: DB = {
             description: "Collaborating on shared development goals.",
             fullText: "Citadel Studios is a close partner of Left-Sided Studios, working together to expand the reach and quality of indie games.",
             image: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/cs_banner.png?raw=true",
-            website: "https://gamejolt.com/@CitadelStudiosOfficial"
+            website: "https://citadelstudios.netlify.app/"
         }
     ]
 };
