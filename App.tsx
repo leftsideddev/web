@@ -191,9 +191,9 @@ const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
                                         <div className="flex items-center gap-2 mb-0.5">
                                             <span className={`font-bold truncate ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{item.title}</span>
                                             <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded border ${
-                                                item.type === 'Game' ? 'border-blue-500/30 text-blue-500' :
+                                                item.type === 'Game' ? 'border-green-500/30 text-green-500' :
                                                 item.type === 'Subsidiary' ? 'border-purple-500/30 text-purple-500' :
-                                                'border-green-500/30 text-green-500'
+                                                'border-blue-500/30 text-blue-500'
                                             }`}>
                                                 {item.type}
                                             </span>
@@ -247,7 +247,7 @@ const Navbar: React.FC = () => {
             <nav className={`fixed top-0 w-full z-50 transition-colors duration-300 border-b ${isDarkMode ? 'bg-black/80 border-white/10' : 'bg-white/90 border-gray-200'} backdrop-blur-md`}>
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                        <Link to="/" className="text-xl font-bold tracking-tighter hover:text-blue-500 transition-colors">
+                        <Link to="/" className="text-xl font-bold tracking-tighter hover:text-green-500 transition-colors">
                             LEFT-SIDED <span className="text-gray-500">STUDIOS</span>
                         </Link>
                         <a 
@@ -265,7 +265,7 @@ const Navbar: React.FC = () => {
                             <Link 
                                 key={link.path} 
                                 to={link.path} 
-                                className={`transition-colors hover:text-blue-500 ${location.pathname.startsWith(link.path) ? (isDarkMode ? 'text-white' : 'text-black') : 'text-gray-500'}`}
+                                className={`transition-colors hover:text-green-500 ${location.pathname.startsWith(link.path) ? (isDarkMode ? 'text-white' : 'text-black') : 'text-gray-500'}`}
                             >
                                 {link.label}
                             </Link>
@@ -276,14 +276,14 @@ const Navbar: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <button 
                                 onClick={() => setIsSearchOpen(true)} 
-                                className={`hover:text-blue-500 transition-colors p-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                                className={`hover:text-green-500 transition-colors p-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
                                 aria-label="Search"
                             >
                                 <Search className="w-5 h-5" />
                             </button>
                             <button 
                                 onClick={toggleTheme} 
-                                className={`hover:text-blue-500 transition-colors p-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                                className={`hover:text-green-500 transition-colors p-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
                                 aria-label="Toggle Theme"
                             >
                                 {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -319,18 +319,18 @@ const Navbar: React.FC = () => {
                                         key={link.path} 
                                         to={link.path} 
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="text-gray-400 hover:text-blue-500 font-medium"
+                                        className="text-gray-400 hover:text-green-500 font-medium"
                                     >
                                         {link.label}
                                     </Link>
                                 ))}
                                 <button 
                                     onClick={() => { setIsSearchOpen(true); setIsMobileMenuOpen(false); }} 
-                                    className="flex items-center gap-2 text-gray-400 hover:text-blue-500"
+                                    className="flex items-center gap-2 text-gray-400 hover:text-green-500"
                                 >
                                     <Search className="w-4 h-4" /> Search
                                 </button>
-                                <button onClick={() => { toggleTheme(); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-gray-400 hover:text-blue-500">
+                                <button onClick={() => { toggleTheme(); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-gray-400 hover:text-green-500">
                                     {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />} Theme
                                 </button>
                                 <a href={getGoogleSiteUrl()} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs font-semibold text-gray-400 pt-4 border-t border-gray-800">
@@ -366,17 +366,17 @@ const Footer: React.FC = () => {
                     <h3 className="text-lg font-bold mb-4">Connect</h3>
                     <ul className="space-y-2 text-sm text-gray-500">
                         <li>
-                            <a href="https://gamejolt.com/@LeftSidedStudios" target="_blank" rel="noreferrer" className="hover:text-blue-500 transition-colors flex items-center gap-2">
+                            <a href="https://gamejolt.com/@LeftSidedStudios" target="_blank" rel="noreferrer" className="hover:text-green-500 transition-colors flex items-center gap-2">
                                 <Monitor className="w-4 h-4" /> GameJolt (Main)
                             </a>
                         </li>
                         <li>
-                            <a href="https://discord.gg/A8XMvSnkCU" target="_blank" rel="noreferrer" className="hover:text-blue-500 transition-colors flex items-center gap-2">
+                            <a href="https://discord.gg/A8XMvSnkCU" target="_blank" rel="noreferrer" className="hover:text-green-500 transition-colors flex items-center gap-2">
                                 <MessageSquare className="w-4 h-4" /> Discord Server
                             </a>
                         </li>
                         <li>
-                            <a href="mailto:leftsidedstudios@gmail.com" className="hover:text-blue-500 transition-colors flex items-center gap-2">
+                            <a href="mailto:leftsidedstudios@gmail.com" className="hover:text-green-500 transition-colors flex items-center gap-2">
                                 <Mail className="w-4 h-4" /> Email Us
                             </a>
                         </li>
@@ -385,7 +385,7 @@ const Footer: React.FC = () => {
                         </li>
                         {db.people.map((person, idx) => (
                             <li key={idx}>
-                                <a href={person.links[0].url} target="_blank" rel="noreferrer" className="hover:text-blue-500 transition-colors flex items-center gap-2">
+                                <a href={person.links[0].url} target="_blank" rel="noreferrer" className="hover:text-green-500 transition-colors flex items-center gap-2">
                                     <span className="opacity-70">{person.name}</span>
                                 </a>
                             </li>
@@ -425,7 +425,7 @@ const App: React.FC = () => {
     return (
         <ThemeProvider>
             <BrowserRouter>
-                <div className="min-h-screen flex flex-col font-sans selection:bg-blue-500 selection:text-white">
+                <div className="min-h-screen flex flex-col font-sans selection:bg-green-500 selection:text-white">
                     <Navbar />
                     <main className="flex-grow pt-24 pb-20 px-6 max-w-7xl mx-auto w-full">
                         <AnimatedRoutes />
