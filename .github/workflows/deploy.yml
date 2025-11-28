@@ -1,0 +1,63 @@
+name: Deploy Vite App to GitHub Pages
+
+on:
+  # Triggers the workflow on pushes to the 'main' branch
+  push:
+    branches: ["main"]
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Grant GITHUB_TOKEN the necessary permissions for deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  # 1. Build Job: Installs dependencies and compiles the source code
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (LTS)
+        # Use a modern Node version (v20+) to avoid the '||=' SyntaxError
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' 
+          cache: 'npm' # Speeds up subsequent installs
+
+      - name: Install Dependencies
+        # Runs 'npm install' based on your package.json
+        run: npm install
+
+      - name: Run Vite Build
+        # Runs 'vite build' (via 'npm run build' script from package.json)
+        run: npm run build 
+      
+      - name: Setup GitHub Pages
+        # Configures the GitHub Pages environment
+        uses: actions/configure-pages@v5
+
+      - name: Upload Artifact
+        # Uploads the compiled assets from the 'dist' folder
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist' # IMPORTANT: Vite defaults to 'dist' as the output folder
+
+  # 2. Deploy Job: Takes the uploaded artifact and publishes it
+  deploy:
+    environment:
+      # Use the github-pages environment
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    # This job only runs after the 'build' job successfully completes
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
