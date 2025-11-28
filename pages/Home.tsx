@@ -166,7 +166,7 @@ const Home: React.FC = () => {
                                         onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/96x96/4c1d95/e0e7ff?text=${founder.name.charAt(0)}`; }}
                                     />
                                     <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{founder.name}</h3>
-                                    <p className="text-xs font-mono text-blue-500 mb-2">{founder.role}</p>
+                                    <p className="text-xs font-mono text-green-500 mb-2">{founder.role}</p>
                                     <div className="flex space-x-3 mt-auto">
                                         {founder.links.map((link, lIdx) => {
                                             let Icon = User;
@@ -190,7 +190,7 @@ const Home: React.FC = () => {
                     {/* Quick Links (GSP Row) */}
                     <motion.section variants={item} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         {[
-                            { label: 'Games', sub: 'Explore titles', icon: Gamepad2, path: '/games', color: 'text-blue-500' },
+                            { label: 'Games', sub: 'Explore titles', icon: Gamepad2, path: '/games', color: 'text-green-500' },
                             { label: 'Subsidiaries', sub: 'The Teams', icon: Network, path: '/subsidiaries', color: 'text-purple-500' },
                             { label: 'Partners', sub: 'Collaborators', icon: Users, path: '/partners', color: 'text-green-500' }
                         ].map((link, idx) => (
@@ -216,7 +216,7 @@ const Home: React.FC = () => {
                     {db.news && db.news.length > 0 && (
                         <motion.section variants={item}>
                             <div className="flex items-center gap-2 mb-4">
-                                <div className={`p-1.5 rounded-lg ${isDarkMode ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-100 text-blue-600'}`}>
+                                <div className={`p-1.5 rounded-lg ${isDarkMode ? 'bg-green-500/10 text-green-400' : 'bg-blue-100 text-green-600'}`}>
                                     <Newspaper className="w-5 h-5" />
                                 </div>
                                 <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Latest News</h2>
@@ -228,7 +228,7 @@ const Home: React.FC = () => {
                                         key={newsItem.id} 
                                         className={`p-6 rounded-xl border relative overflow-hidden ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-200'}`}
                                     >
-                                        <div className={`absolute top-0 left-0 w-1 h-full ${isDarkMode ? 'bg-blue-500' : 'bg-blue-600'}`}></div>
+                                        <div className={`absolute top-0 left-0 w-1 h-full ${isDarkMode ? 'bg-green-500' : 'bg-green-600'}`}></div>
                                         <div className="flex flex-col gap-3">
                                             <div className="flex items-center justify-between">
                                                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md ${isDarkMode ? 'bg-white/5 text-gray-400' : 'bg-gray-100 text-gray-600'}`}>
@@ -250,7 +250,7 @@ const Home: React.FC = () => {
                                                         href={newsItem.link} 
                                                         target="_blank" 
                                                         rel="noreferrer" 
-                                                        className={`inline-flex items-center gap-1 text-sm font-semibold transition-colors ${isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
+                                                        className={`inline-flex items-center gap-1 text-sm font-semibold transition-colors ${isDarkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-700'}`}
                                                     >
                                                         Read More <ArrowRight className="w-3 h-3" />
                                                     </a>
@@ -280,7 +280,7 @@ const Home: React.FC = () => {
             {/* Footer Quote */}
             <motion.section variants={item} className={`max-w-4xl mx-auto text-center border-t pt-12 mt-12 ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}>
                 <p className="text-xl md:text-2xl font-light text-gray-500 leading-relaxed italic">"{db.about.text}"</p>
-                <p className="mt-4 text-sm font-semibold text-blue-500 uppercase tracking-widest">- {db.about.quoteAuthor}</p>
+                <p className="mt-4 text-sm font-semibold text-green-500 uppercase tracking-widest">- {db.about.quoteAuthor}</p>
             </motion.section>
         </motion.div>
     );
