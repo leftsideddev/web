@@ -167,10 +167,10 @@ export const db: DB = {
             games: [
 				{
 					id: "series_fsaf_otc",
-					name: "Five Nights at Freddy's: On the Clock",
+					title: "Five Nights at Freddy's: On the Clock",
 					description: "TBA",
 					fullText: "An animated series set in the late 90s as aspiring partners build the corperate empire of a lifetime",
-					image: null,
+					image: "",
 					releaseDate: "Q3 2026 - Q2 2027",
 					link: null
 				}

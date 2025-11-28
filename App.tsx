@@ -96,23 +96,29 @@ const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 
         // 1. Search Main Games
         db.games.forEach(g => {
-            if (g.title.toLowerCase().includes(q) || g.description.toLowerCase().includes(q)) {
-                items.push({ id: g.id, title: g.title, desc: g.description, type: 'Game', path: `/games/${g.id}`, image: g.image });
+            const title = g.title || '';
+            const desc = g.description || '';
+            if (title.toLowerCase().includes(q) || desc.toLowerCase().includes(q)) {
+                items.push({ id: g.id, title: title, desc: desc, type: 'Game', path: `/games/${g.id}`, image: g.image });
             }
         });
 
         // 2. Search Subsidiaries and their Games
         db.subsidiaries.forEach(s => {
             // The Studio itself
-            if (s.name.toLowerCase().includes(q) || s.description.toLowerCase().includes(q)) {
-                items.push({ id: s.id, title: s.name, desc: s.description, type: 'Subsidiary', path: `/subsidiaries/${s.id}`, image: s.image });
+            const sName = s.name || '';
+            const sDesc = s.description || '';
+            if (sName.toLowerCase().includes(q) || sDesc.toLowerCase().includes(q)) {
+                items.push({ id: s.id, title: sName, desc: sDesc, type: 'Subsidiary', path: `/subsidiaries/${s.id}`, image: s.image });
             }
             // Studio's Games
             s.games.forEach(g => {
-                 if (g.title.toLowerCase().includes(q) || g.description.toLowerCase().includes(q)) {
+                 const gTitle = g.title || '';
+                 const gDesc = g.description || '';
+                 if (gTitle.toLowerCase().includes(q) || gDesc.toLowerCase().includes(q)) {
                     // Avoid duplicates if a game is listed in both places (unlikely but safe)
                     if (!items.find(i => i.id === g.id)) {
-                        items.push({ id: g.id, title: g.title, desc: g.description, type: 'Game', path: `/games/${g.id}`, image: g.image });
+                        items.push({ id: g.id, title: gTitle, desc: gDesc, type: 'Game', path: `/games/${g.id}`, image: g.image });
                     }
                  }
             });
@@ -120,8 +126,10 @@ const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 
         // 3. Search Partners
         db.partners.forEach(p => {
-             if (p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)) {
-                items.push({ id: p.id, title: p.name, desc: p.description, type: 'Partner', path: `/partners/${p.id}`, image: p.image });
+             const pName = p.name || '';
+             const pDesc = p.description || '';
+             if (pName.toLowerCase().includes(q) || pDesc.toLowerCase().includes(q)) {
+                items.push({ id: p.id, title: pName, desc: pDesc, type: 'Partner', path: `/partners/${p.id}`, image: p.image });
             }
         });
 
