@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext, useRef, useMemo } from 'react';
-import { MemoryRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
     Menu, Sun, Moon, ArrowLeft, Gamepad2, Network, 
     Users, Mail, Monitor, MessageSquareText, Globe, Search, X, ChevronRight
@@ -417,7 +417,7 @@ const AnimatedRoutes: React.FC = () => {
 const App: React.FC = () => {
     return (
         <ThemeProvider>
-            <MemoryRouter>
+            <HashRouter>
                 <div className="min-h-screen flex flex-col font-sans selection:bg-blue-500 selection:text-white">
                     <Navbar />
                     <main className="flex-grow pt-24 pb-20 px-6 max-w-7xl mx-auto w-full">
@@ -425,7 +425,7 @@ const App: React.FC = () => {
                     </main>
                     <Footer />
                 </div>
-            </MemoryRouter>
+            </HashRouter>
         </ThemeProvider>
     );
 };
