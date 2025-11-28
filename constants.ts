@@ -165,13 +165,15 @@ export const db: DB = {
             fullText: "Skullix Media Group handles various media production aspects, ensuring high-quality content delivery across the network.",
             image: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/skullix.png?raw=true",
             games: [
-				id: "series_fsaf_otc"
-				name: "Five Nights at Freddy's: On the Clock"
-				description: "TBA"
-				fullText: "An animated series set in the late 90s as aspiring partners build the corperate empire of a lifetime"
-				image: null
-				releaseDate: "Q3 2026 - Q2 2027"
-				link: null
+				{
+					id: "series_fsaf_otc"
+					name: "Five Nights at Freddy's: On the Clock"
+					description: "TBA"
+					fullText: "An animated series set in the late 90s as aspiring partners build the corperate empire of a lifetime"
+					image: null
+					releaseDate: "Q3 2026 - Q2 2027"
+					link: null
+				}
 			]
         },
         {
