@@ -56,7 +56,7 @@ export const db: DB = {
         {
             id: "news_cardamania_delay",
             title: "Cardamania Release Schedule Update",
-            date: "November 2025",
+            date: "May 2025",
             content: "We have an important update regarding Cardamania. The release window has been officially shifted to 2028. This decision stems from necessary adjustments due to background reasons that we are unable to disclose fully at this moment. We remain committed to delivering the best possible experience and appreciate your patience as we navigate these internal shifts.",
             link: "https://twitter.com/LeftSidedStudios"
         }
@@ -164,17 +164,7 @@ export const db: DB = {
             description: "Supporting media production for Left-Sided projects.",
             fullText: "Skullix Media Group handles various media production aspects, ensuring high-quality content delivery across the network.",
             image: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/skullix.png?raw=true",
-            games: [
-				{
-					id: "series_fsaf_otc",
-					name: "Five Nights at Freddy's: On the Clock",
-					description: "TBA",
-					fullText: "An animated series set in the late 90s as aspiring partners build the corperate empire of a lifetime",
-					image: null,
-					releaseDate: "Q3 2026 - Q2 2027",
-					link: null
-				}
-			]
+            games: []
         },
         {
             id: "sub_endgame",
