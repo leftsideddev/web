@@ -1,13 +1,12 @@
 import React, { useState, useEffect, createContext, useContext, useRef, useMemo } from 'react';
-import { HashRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-    Menu, Sun, Moon, ArrowLeft, Gamepad2, Network, 
-    Users, Mail, Monitor, MessageSquareText, Globe, Search, X, ChevronRight
+    Menu, Sun, Moon, ArrowLeft,
+    Users, Mail, Monitor, MessageSquare, Search, X, ChevronRight
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { db } from './constants';
-import { Game, TeamMember } from './types';
 
 // Pages
 import Home from './pages/Home';
@@ -365,7 +364,7 @@ const Footer: React.FC = () => {
                         </li>
                         <li>
                             <a href="https://discord.gg/A8XMvSnkCU" target="_blank" rel="noreferrer" className="hover:text-blue-500 transition-colors flex items-center gap-2">
-                                <MessageSquareText className="w-4 h-4" /> Discord Server
+                                <MessageSquare className="w-4 h-4" /> Discord Server
                             </a>
                         </li>
                         <li>
@@ -417,7 +416,7 @@ const AnimatedRoutes: React.FC = () => {
 const App: React.FC = () => {
     return (
         <ThemeProvider>
-            <HashRouter>
+            <BrowserRouter>
                 <div className="min-h-screen flex flex-col font-sans selection:bg-blue-500 selection:text-white">
                     <Navbar />
                     <main className="flex-grow pt-24 pb-20 px-6 max-w-7xl mx-auto w-full">
@@ -425,7 +424,7 @@ const App: React.FC = () => {
                     </main>
                     <Footer />
                 </div>
-            </HashRouter>
+            </BrowserRouter>
         </ThemeProvider>
     );
 };
