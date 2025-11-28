@@ -1,46 +1,20 @@
-# **Left-Sided Studios Official Website**
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-This repository contains the source code for the official Left-Sided Studios informational website. The site serves as a central hub for showcasing our core games, outlining our subsidiaries, listing our partners, and providing essential contact information.  
-The website is designed as a single-page application (SPA) built using modern web standards (HTML, Tailwind CSS, and vanilla JavaScript) for speed and simplicity.
+# Run and deploy your AI Studio app
 
-## **✨ Features**
+This contains everything you need to run your app locally.
 
-* **Responsive Design:** Optimized for seamless viewing on desktop, tablet, and mobile devices using Tailwind CSS.  
-* **Single-Page Architecture:** Uses JavaScript to dynamically render content (home, games, subsidiaries, partners, contact) without full page reloads.  
-* **Game and Subsidiary Details:** Dedicated pages for detailed descriptions of projects like *Cardamania*, *Bumbl*, and subsidiary studios like ANdᴱ Studios.  
-* **External Links Integration:** Direct links to the official Left-Sided Studios Google Site and GameJolt pages.  
-* **Lucide Icons:** Utilizes the lightweight Lucide icon library for modern, clean visuals.
+View your app in AI Studio: https://ai.studio/apps/drive/1QatVGflVSlP1PvBPJes3i-jKFqWz9Qow
 
-## **🚀 Getting Started**
+## Run Locally
 
-The Left-Sided Studios website is built into a single, self-contained index.html file, making local setup extremely simple.
+**Prerequisites:**  Node.js
 
-### **Prerequisites**
 
-You need a modern web browser (Chrome, Firefox, Edge, Safari, etc.). No special server-side dependencies are required.
-
-## **📁 Project Structure**
-
-The entire application logic, structure, and styling are contained within one file:
-
-| Filepath | Description |
-| :---- | :---- |
-| index.html | The main file containing all HTML structure, JavaScript logic (routing, data storage, rendering), and CSS styling (via Tailwind CDN). |
-
-The data for all games, subsidiaries, partners, and team members is stored directly within the \<script\> tag as a JavaScript object (db), making content management centralized.
-
-## **🔗 Links**
-
-* **Official Google Site:** [https://sites.google.com/view/leftsidedstudios/home?authuser=0](https://sites.google.com/view/leftsidedstudios/home?authuser=0)  
-* **GameJolt Profile:** [https://gamejolt.com/@LeftSidedStudios](https://gamejolt.com/@LeftSidedStudios)  
-* **Discord Server:** [https://discord.gg/A8XMvSnkCU](https://discord.gg/A8XMvSnkCU)
-
-## **🤝 Contribution**
-
-This repository is primarily for distributing the official Left-Sided Studios website code. While we appreciate community interest, we are not currently accepting external pull requests for this project.
-
-## **📧 Contact**
-
-For business inquiries, partnerships, or general questions, please reach out via our official email:  
-**leftsidedstudios@gmail.com**  
-*Built with passion by the team at Left-Sided Studios.*
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
