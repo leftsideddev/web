@@ -5,7 +5,25 @@ import { ArrowLeft, ArrowRight, User, Shield, Zap, Users } from 'lucide-react';
 import { useTheme } from '../App';
 import { db } from '../constants';
 import Card from '../components/Card';
-import { Subsidiary, Partner } from '../types';
+import { Subsidiary, Partner, GameStatus } from '../types';
+
+const StatusBadge: React.FC<{ status: GameStatus | string }> = ({ status }) => {
+    const colors: Record<string, string> = {
+        'In Development': 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+        'Released': 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+        'Paused': 'bg-amber-500/10 border-amber-500/30 text-amber-400',
+        'Alpha': 'bg-purple-500/10 border-purple-500/30 text-purple-400',
+        'Beta': 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
+        'Canceled': 'bg-red-500/10 border-red-500/30 text-red-400',
+        'Active': 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+    };
+
+    return (
+        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border backdrop-blur-md ${colors[status] || 'bg-gray-500/10 border-gray-500/30 text-gray-400'}`}>
+            {status}
+        </div>
+    );
+};
 
 const Network: React.FC = () => {
     const { isDarkMode } = useTheme();
@@ -16,41 +34,31 @@ const Network: React.FC = () => {
 
     const renderSubCard = (sub: Subsidiary) => {
         const isFounder = sub.type === 'Founder Imprint';
-        // As requested: Founder project entries keep emerald. Official units use purple.
         const accentColor = isFounder ? 'emerald' : 'purple';
-        const typeColorClass = isFounder ? 'text-emerald-500' : 'text-purple-500';
-
+        
         return (
             <Card
                 key={sub.id}
                 onClick={() => navigate(`/network/${sub.id}`)}
                 image={sub.image}
                 title={sub.name}
-                subtitle={sub.tagline}
                 description={sub.description}
                 accentColor={accentColor}
-                overlayColor={isFounder ? "bg-emerald-900/10" : "bg-purple-900/10"}
-                footer={
-                    <>
-                        <div className="flex flex-col">
-                            <span className={`text-[9px] font-black uppercase tracking-widest ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                                {isFounder ? 'Owned By' : sub.type}
-                            </span>
-                            {sub.owner && (
-                                <span className={`text-[10px] font-bold transition-colors ${typeColorClass}`}>
-                                    {sub.owner}
-                                </span>
-                            )}
-                            {!isFounder && (
-                                <span className={`text-[10px] font-bold transition-colors ${typeColorClass}`}>
-                                    Official Unit
-                                </span>
-                            )}
-                        </div>
-                        <span className={`text-xs flex items-center gap-1 font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                            View Details <ArrowRight className="w-3 h-3" />
+                imageClassName="aspect-[16/9]"
+                subtitle={
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
+                            {isFounder ? `BY ${sub.owner?.toUpperCase()}` : sub.type.toUpperCase()}
                         </span>
-                    </>
+                    </div>
+                }
+                footer={
+                    <div className="flex items-center justify-between w-full">
+                        <StatusBadge status="Active" />
+                        <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${isFounder ? 'text-emerald-500' : 'text-purple-500'}`}>
+                            View Details <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                    </div>
                 }
             />
         );
@@ -62,14 +70,20 @@ const Network: React.FC = () => {
             onClick={() => navigate(`/partners/${partner.id}`)}
             image={partner.image}
             title={partner.name}
-            subtitle={partner.type}
             description={partner.description}
             accentColor="blue"
-            overlayColor="bg-blue-900/10"
-            footer={
-                <span className={`text-xs flex items-center gap-1 font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                    View Details <ArrowRight className="w-3 h-3" />
+            imageClassName="aspect-[16/9]"
+            subtitle={
+                <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
+                    {partner.type.toUpperCase()}
                 </span>
+            }
+            footer={
+                <div className="flex items-center justify-end w-full">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-500">
+                        View Details <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                </div>
             }
         />
     );
@@ -92,7 +106,7 @@ const Network: React.FC = () => {
             </div>
 
             {/* Official Units */}
-            <section className="mb-24">
+            <section id="official" className="mb-24">
                 <div className="flex items-center gap-3 mb-8">
                     <Shield className="w-6 h-6 text-purple-500" />
                     <h2 className="text-2xl font-black uppercase tracking-tight">Official Subsidiaries</h2>
@@ -103,7 +117,7 @@ const Network: React.FC = () => {
             </section>
 
             {/* Founder Projects */}
-            <section className="mb-24">
+            <section id="founder-projects" className="mb-24">
                 <div className="flex items-center gap-3 mb-8">
                     <User className="w-6 h-6 text-emerald-500" />
                     <h2 className="text-2xl font-black uppercase tracking-tight">Founder Projects</h2>
@@ -114,7 +128,7 @@ const Network: React.FC = () => {
             </section>
 
             {/* Strategic Partners */}
-            <section className="mb-24">
+            <section id="partners" className="mb-24">
                 <div className="flex items-center gap-3 mb-8">
                     <Users className="w-6 h-6 text-blue-500" />
                     <h2 className="text-2xl font-black uppercase tracking-tight">Strategic Partners</h2>
@@ -124,7 +138,7 @@ const Network: React.FC = () => {
                 </div>
             </section>
 
-            <section className={`mt-32 p-12 md:p-16 rounded-[3rem] border flex flex-col md:flex-row items-center gap-12 text-center md:text-left ${
+            <section id="alignment" className={`mt-32 p-12 md:p-16 rounded-[3rem] border flex flex-col md:flex-row items-center gap-12 text-center md:text-left ${
                 isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-gray-50 border-gray-200'
             }`}>
                 <div className="p-6 rounded-full bg-emerald-500/10 text-emerald-500">

@@ -1,4 +1,3 @@
-
 import React, { useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, Link } from 'react-router-dom';
@@ -27,10 +26,10 @@ const SeriesDetail: React.FC = () => {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-5xl mx-auto py-8">
             <div className="mb-12 flex items-center justify-between">
-                <Link to="/network" className="hover:text-purple-500 flex items-center gap-2 transition-colors text-xs font-bold uppercase tracking-widest text-gray-500">
+                <Link to="/network" className="hover:text-red-500 flex items-center gap-2 transition-colors text-xs font-bold uppercase tracking-widest text-gray-500">
                     <ChevronLeft className="w-4 h-4" /> Back to Network
                 </Link>
-                <span className="text-[10px] font-black px-3 py-1 bg-purple-500/10 border border-purple-500/30 text-purple-500 rounded-full uppercase tracking-widest">Production Series</span>
+                <span className="text-[10px] font-black px-3 py-1 bg-red-500/10 border border-red-500/30 text-red-500 rounded-full uppercase tracking-widest">Production Series</span>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
@@ -41,19 +40,18 @@ const SeriesDetail: React.FC = () => {
                             className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" 
                             alt={series.title}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <PlayCircle className="w-20 h-20 text-white/50" />
                         </div>
                         <div className="absolute bottom-6 left-8">
-                             <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter drop-shadow-2xl">{series.title}</h1>
+                             <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter drop-shadow-2xl uppercase">{series.title}</h1>
                         </div>
                     </div>
 
                     <section className="space-y-6">
-                        <div className="flex items-center gap-2 text-purple-500">
+                        <div className="flex items-center gap-2 text-red-500">
                             <Layers className="w-5 h-5" />
-                            <h3 className="text-xs font-black uppercase tracking-[0.3em]">Production Overview</h3>
+                            <h3 className="text-xs font-black uppercase tracking-[0.3em]">Project Description</h3>
                         </div>
                         <p className="text-xl text-gray-400 leading-relaxed font-light">{series.fullText}</p>
                     </section>
@@ -61,8 +59,8 @@ const SeriesDetail: React.FC = () => {
 
                 <aside className="space-y-8">
                     <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100'}`}>
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-purple-500 mb-6 flex items-center gap-2">
-                            <Info className="w-4 h-4" /> Broadcast Details
+                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-red-500 mb-6 flex items-center gap-2">
+                            <span className="w-4 h-4 flex items-center justify-center"><Info className="w-4 h-4" /></span> Project Details
                         </h3>
                         <div className="space-y-6">
                             <div className="flex items-center gap-4">
@@ -70,7 +68,7 @@ const SeriesDetail: React.FC = () => {
                                     <Calendar className="w-4 h-4 text-gray-500" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] text-gray-500 uppercase font-black">Expected Launch</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-black">Announced</p>
                                     <p className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{series.releaseDate}</p>
                                 </div>
                             </div>
@@ -90,24 +88,24 @@ const SeriesDetail: React.FC = () => {
                                 href={series.link} 
                                 target="_blank" 
                                 rel="noreferrer"
-                                className="mt-10 w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white shadow-xl shadow-purple-500/20"
+                                className="mt-10 w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white shadow-xl shadow-red-500/20"
                             >
-                                Watch Trailer <ArrowRight className="w-4 h-4" />
+                                VIEW PROJECT <ArrowRight className="w-4 h-4" />
                             </a>
                         )}
                     </div>
 
                     <div className={`p-8 rounded-3xl border ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100'}`}>
                         <div className="flex items-center gap-3 mb-8">
-                            <Map className="w-5 h-5 text-emerald-500" />
-                            <h3 className="text-xs font-black uppercase tracking-[0.2em]">Release Roadmap</h3>
+                            <Map className="w-5 h-5 text-red-500" />
+                            <h3 className="text-xs font-black uppercase tracking-[0.2em]">Project Roadmap</h3>
                         </div>
                         
                         <div className="space-y-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-px before:bg-white/5">
                             {series.roadmap && series.roadmap.length > 0 ? (
                                 series.roadmap.map((milestone, i) => (
                                     <div key={i} className="relative pl-10">
-                                        <div className={`absolute left-0 top-1 transition-colors ${milestone.completed ? 'text-emerald-500' : 'text-gray-700'}`}>
+                                        <div className={`absolute left-0 top-1 transition-colors ${milestone.completed ? 'text-red-500' : 'text-gray-700'}`}>
                                             {milestone.completed ? <CheckCircle className="w-5 h-5 bg-neutral-900" /> : <Circle className="w-5 h-5 bg-neutral-900" />}
                                         </div>
                                         <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1">{milestone.date}</span>

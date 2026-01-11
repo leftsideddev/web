@@ -4,12 +4,12 @@ import { db } from '../constants';
 import { useTheme } from '../App';
 import { History, Info, Download, Mail, Layout, Terminal, Compass, Zap, GitBranch, Share2, CheckCircle2, ArrowRight } from 'lucide-react';
 
-const FadeInSection: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className }) => (
+const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, delay?: number }> = ({ children, className, delay = 0 }) => (
     <motion.section 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.8, ease: "easeOut", delay }}
         className={className}
     >
         {children}
@@ -68,44 +68,48 @@ const Studio: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            {/* Hero Section */}
-            <header className="text-center mb-24">
+            {/* Hero Section with Staggered Fade */}
+            <header className="text-center mb-24 overflow-hidden">
                 <motion.h1 
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ 
                         duration: 1.2,
-                        ease: "easeOut"
+                        ease: [0.16, 1, 0.3, 1]
                     }}
-                    className="text-7xl md:text-8xl font-black tracking-tighter mb-8 bg-gradient-to-r from-emerald-400 via-emerald-500 to-green-600 bg-clip-text text-transparent"
+                    className="text-7xl md:text-8xl font-black tracking-tighter mb-8 bg-gradient-to-r from-emerald-400 via-emerald-500 to-green-600 bg-clip-text text-transparent uppercase"
                 >
                     The Studio.
                 </motion.h1>
                 <motion.p 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.8 }}
                     className="text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed italic"
                 >
                     "{db.about.text}"
                 </motion.p>
             </header>
 
-            {/* Core Values */}
-            <FadeInSection className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
-                <div className={`p-10 rounded-3xl border transition-all hover:border-emerald-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
-                    <Compass className="w-10 h-10 text-emerald-500 mb-8" />
-                    <h2 className="text-2xl font-black uppercase tracking-tight mb-4">Philosophy</h2>
-                    <p className="text-gray-500 leading-relaxed text-lg">{db.about.philosophy}</p>
-                </div>
-                <div className={`p-10 rounded-3xl border transition-all hover:border-purple-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
-                    <Zap className="w-10 h-10 text-purple-500 mb-8" />
-                    <h2 className="text-2xl font-black uppercase tracking-tight mb-4">Mission</h2>
-                    <p className="text-gray-500 leading-relaxed text-lg">{db.about.mission}</p>
-                </div>
-            </FadeInSection>
+            {/* Core Values - Staggered Scroll */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
+                <FadeInSection delay={0.1}>
+                    <div className={`p-10 h-full rounded-3xl border transition-all hover:border-emerald-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
+                        <Compass className="w-10 h-10 text-emerald-500 mb-8" />
+                        <h2 className="text-2xl font-black uppercase tracking-tight mb-4">Philosophy</h2>
+                        <p className="text-gray-500 leading-relaxed text-lg">{db.about.philosophy}</p>
+                    </div>
+                </FadeInSection>
+                <FadeInSection delay={0.2}>
+                    <div className={`p-10 h-full rounded-3xl border transition-all hover:border-purple-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
+                        <Zap className="w-10 h-10 text-purple-500 mb-8" />
+                        <h2 className="text-2xl font-black uppercase tracking-tight mb-4">Mission</h2>
+                        <p className="text-gray-500 leading-relaxed text-lg">{db.about.mission}</p>
+                    </div>
+                </FadeInSection>
+            </div>
 
-            {/* Timeline Section */}
+            {/* Timeline Section with Interactive descriptions */}
             <FadeInSection className="mb-32">
                 <div className="flex items-center gap-3 mb-16">
                     <History className="w-8 h-8 text-blue-500" />
@@ -128,7 +132,6 @@ const Studio: React.FC = () => {
                                 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
                                 className={`text-gray-500 text-lg leading-relaxed max-w-3xl transition-all duration-300 p-4 rounded-2xl border border-transparent ${isDarkMode ? 'bg-white/5' : 'bg-gray-50/50'}`}
-                                style={{ willChange: 'transform, border-color' }}
                             >
                                 {event.description}
                             </motion.div>
@@ -146,14 +149,11 @@ const Studio: React.FC = () => {
                 
                 <div className="relative p-12 rounded-[3rem] border border-white/5 bg-black/5 overflow-hidden">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-y-16" role="tree" aria-label="Visual organizational structure of Left-Sided Studios and partners">
-                        {/* LEFT SIDED BRANCH */}
                         <div className="md:col-span-8 flex flex-col items-center">
                             <FamilyTreeNode name="Left-Sided Studios" type="Parent Studio" color="text-emerald-500" />
-                            
                             <div className="w-full flex justify-center py-4" aria-hidden="true">
                                 <div className="h-12 w-px bg-gradient-to-b from-emerald-500 to-transparent"></div>
                             </div>
-
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                                 <FamilyTreeNode name="ANdE Studios" type="Subsidiary" color="text-purple-500" />
                                 <FamilyTreeNode name="Gotch-ya Studios" type="Subsidiary" color="text-purple-500" />
@@ -162,7 +162,6 @@ const Studio: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* CITADEL BRANCH */}
                         <div className="md:col-span-4 flex flex-col items-center">
                             <div className="mb-4 text-[10px] font-black uppercase tracking-widest text-gray-600 opacity-50">Strategic Alignment</div>
                             <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" />
@@ -171,23 +170,16 @@ const Studio: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* SHARED ASSET (SKULLIX) */}
                         <div className="md:col-span-12 flex flex-col items-center pt-16 relative">
                             <div className="absolute top-0 left-1/4 right-1/4 h-16 border-t-2 border-x-2 border-dashed border-white/10 rounded-t-[3rem] -mt-2" aria-hidden="true"></div>
-                            
                             <div className="flex items-center gap-3 mb-6">
                                 <Share2 className="w-4 h-4 text-orange-500" />
                                 <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Shared Production Unit</span>
                             </div>
-                            
                             <FamilyTreeNode name="Skullix Media Group" type="Media & Production" color="text-orange-500" isJoint={true} />
                         </div>
                     </div>
                 </div>
-                
-                <p className="text-center text-xs text-gray-500 mt-12 font-medium italic opacity-60">
-                    Skullix Media Group operates as a joint venture, providing specialized media production support for both the Left-Sided network and Citadel Studios initiatives.
-                </p>
             </FadeInSection>
 
             {/* Press Kit Hub */}
@@ -206,7 +198,6 @@ const Studio: React.FC = () => {
                                     key={i} 
                                     href={asset.url} 
                                     onClick={(e) => asset.type === 'Brand Package' || asset.url === '#' ? handleDownload(e, asset.label) : null}
-                                    aria-label={`Download ${asset.label}`}
                                     className={`flex items-center justify-between p-4 rounded-2xl border outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all ${isDarkMode ? 'bg-white/5 border-white/5 hover:border-emerald-500/50' : 'bg-gray-50 border-gray-200 hover:border-emerald-500'}`}
                                 >
                                     <div className="flex items-center gap-3">

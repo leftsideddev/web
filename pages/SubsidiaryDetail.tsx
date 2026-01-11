@@ -1,52 +1,72 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, PlayCircle } from 'lucide-react';
-import { useTheme } from '../App';
-import { db } from '../constants';
+import { ChevronLeft, ArrowRight, PlayCircle } from 'lucide-react';
+import { useTheme, useDatabase } from '../App';
+import Card from '../components/Card';
+import { GameStatus } from '../types';
+
+const StatusBadge: React.FC<{ status: GameStatus | string }> = ({ status }) => {
+    const colors: Record<string, string> = {
+        'In Development': 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+        'Released': 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+        'Paused': 'bg-amber-500/10 border-amber-500/30 text-amber-400',
+        'Alpha': 'bg-purple-500/10 border-purple-500/30 text-purple-400',
+        'Beta': 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
+        'Canceled': 'bg-red-500/10 border-red-500/30 text-red-400'
+    };
+
+    return (
+        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border backdrop-blur-md ${colors[status] || 'bg-gray-500/10 border-gray-500/30 text-gray-400'}`}>
+            {status}
+        </div>
+    );
+};
 
 const SubsidiaryDetail: React.FC = () => {
     const { id } = useParams();
     const { isDarkMode } = useTheme();
+    const { data } = useDatabase();
     const navigate = useNavigate();
 
-    const sub = db.subsidiaries.find(s => s.id === id);
+    const sub = data.subsidiaries.find(s => s.id === id);
 
     if (!sub) {
-        return <div className="text-center py-20">Subsidiary not found</div>;
+        return <div className="text-center py-20 font-black uppercase tracking-widest opacity-40">Subsidiary Data Missing</div>;
     }
 
-    // Standard Animation Config matching Games tab benchmark
-    const cardTransition = { type: "spring", stiffness: 400, damping: 25 } as const;
-    const standardHover = { 
-        y: -12, 
-        scale: 1.04,
-        boxShadow: isDarkMode 
-            ? "0 30px 60px -12px rgba(16, 185, 129, 0.3)" 
-            : "0 30px 60px -12px rgba(0, 0, 0, 0.12)"
-    };
+    const isFounder = sub.type === 'Founder Imprint';
+    const accentColor = isFounder ? 'emerald' : 'purple';
 
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-5xl mx-auto">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-5xl mx-auto py-8">
              <div className="mb-8 flex items-center gap-3 text-sm text-gray-500">
-                <Link to="/network" className="hover:text-emerald-500 flex items-center gap-1 transition-colors">
-                    <ChevronLeft className="w-4 h-4" /> All Network
+                <Link to="/network" className="hover:text-emerald-500 flex items-center gap-1 transition-colors text-xs font-bold uppercase tracking-widest">
+                    <ChevronLeft className="w-4 h-4" /> Back to Network
                 </Link>
-                <span>/</span>
-                <span className={isDarkMode ? 'text-white' : 'text-black'}>{sub.name}</span>
+                <span className="opacity-20">/</span>
+                <span className={`text-xs font-black uppercase tracking-widest ${isDarkMode ? 'text-white' : 'text-black'}`}>{sub.name}</span>
             </div>
 
-            <div className={`rounded-2xl p-8 md:p-12 border mb-12 flex flex-col md:flex-row gap-8 items-start ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-200'}`}>
-                <img 
-                    src={sub.image} 
-                    className="w-32 h-32 rounded-full object-cover border-2 border-white/10" 
-                    alt={sub.name}
-                    onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/128x128/3730a3/FFFFFF?text=${sub.name.charAt(0)}`; }}
-                />
-                <div>
-                    <h1 className={`text-4xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{sub.name}</h1>
-                    <p className="text-purple-500 font-mono mb-4">{sub.tagline}</p>
-                    <p className={`max-w-2xl mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <div className={`rounded-[3rem] p-10 md:p-12 border mb-20 flex flex-col md:flex-row gap-12 items-center md:items-start ${isDarkMode ? 'bg-neutral-900 border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-xl'}`}>
+                <div className="relative group flex-shrink-0">
+                    <div className={`absolute -inset-1 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200 ${isFounder ? 'bg-emerald-500' : 'bg-purple-500'}`}></div>
+                    <img 
+                        src={sub.image} 
+                        className="relative w-40 h-40 rounded-full object-cover border-4 border-black/10 shadow-lg" 
+                        alt={sub.name}
+                        onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/128x128/3730a3/FFFFFF?text=${sub.name.charAt(0)}`; }}
+                    />
+                </div>
+                <div className="text-center md:text-left">
+                    <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-4">
+                        <h1 className={`text-5xl font-black tracking-tighter uppercase ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{sub.name}</h1>
+                        <span className={`inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${isFounder ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500' : 'bg-purple-500/10 border-purple-500/30 text-purple-500'}`}>
+                            {isFounder ? `BY ${sub.owner?.toUpperCase()}` : sub.type.toUpperCase()}
+                        </span>
+                    </div>
+                    <p className="text-gray-500 font-bold uppercase tracking-[0.3em] mb-6 text-sm">{sub.tagline}</p>
+                    <p className={`max-w-3xl text-xl leading-relaxed font-light ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         {sub.fullText || sub.description}
                     </p>
                 </div>
@@ -54,87 +74,87 @@ const SubsidiaryDetail: React.FC = () => {
 
             {/* Games Section */}
             {(sub.games && sub.games.length > 0) && (
-                <>
-                    <h2 className={`text-2xl font-bold mb-6 border-b pb-4 ${isDarkMode ? 'text-white border-white/10' : 'text-gray-900 border-gray-200'}`}>
-                        Interactive Projects by {sub.name}
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+                <section className="mb-24">
+                    <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
+                        <h2 className={`text-2xl font-black uppercase tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Interactive Projects
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {sub.games.map(game => (
-                            <motion.div 
+                            <Card 
                                 key={game.id}
-                                whileHover={standardHover}
-                                transition={cardTransition}
                                 onClick={() => navigate(`/games/${game.id}`)}
-                                className={`cursor-pointer border rounded-2xl p-4 flex items-center gap-4 transition-colors duration-300 ${isDarkMode ? 'bg-black border-neutral-800 hover:border-emerald-500/40' : 'bg-gray-50 border-gray-200 hover:bg-white hover:border-emerald-500'}`}
-                                style={{ willChange: 'transform' }}
-                            >
-                                <img 
-                                    src={game.image} 
-                                    className="w-24 h-24 object-cover rounded-xl bg-neutral-800 transition-transform duration-500 group-hover:scale-105" 
-                                    alt={game.title}
-                                    onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/96x96/1e293b/FFFFFF?text=IMG`; }}
-                                />
-                                <div>
-                                    <h4 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{game.title}</h4>
-                                    <p className="text-sm text-gray-500 line-clamp-1">{game.description}</p>
-                                    <p className="text-[10px] font-bold text-emerald-500 mt-1 uppercase tracking-widest">{game.status}</p>
-                                </div>
-                                <div className="ml-auto text-gray-500">
-                                    <ChevronRight />
-                                </div>
-                            </motion.div>
+                                image={game.image}
+                                title={game.title}
+                                description={game.description}
+                                accentColor={accentColor}
+                                imageClassName="aspect-[16/9]"
+                                scalingMode={game.id === 'game_rise' ? 'pixelated' : 'auto'}
+                                subtitle={
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        {(game.genres as string[]).map((genre, idx) => (
+                                            <React.Fragment key={genre}>
+                                                <span className="text-[10px] font-black uppercase tracking-widest">{genre}</span>
+                                                {idx < (game.genres as string[]).length - 1 && <span className="opacity-30">●</span>}
+                                            </React.Fragment>
+                                        ))}
+                                    </div>
+                                }
+                                footer={
+                                    <div className="flex items-center justify-between w-full">
+                                        <StatusBadge status={game.status} />
+                                        <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${isFounder ? 'text-emerald-500' : 'text-purple-500'}`}>
+                                            View Details <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                        </div>
+                                    </div>
+                                }
+                            />
                         ))}
                     </div>
-                </>
+                </section>
             )}
 
             {/* Series Section */}
             {(sub.series && sub.series.length > 0) && (
-                <>
-                    <h2 className={`text-2xl font-bold mb-6 border-b pb-4 ${isDarkMode ? 'text-white border-white/10' : 'text-gray-900 border-gray-200'}`}>
-                        Media Series & Productions
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <section className="mb-24">
+                    <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
+                        <h2 className={`text-2xl font-black uppercase tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                            Cinematic Productions
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {sub.series.map(series => (
-                            <motion.div 
+                            <Card 
                                 key={series.id}
-                                whileHover={standardHover}
-                                transition={cardTransition}
-                                className={`border rounded-2xl overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-black border-neutral-800 hover:border-emerald-500/40' : 'bg-gray-50 border-gray-200 hover:bg-white hover:border-emerald-500'}`}
-                                style={{ willChange: 'transform' }}
-                            >
-                                <div className="aspect-video relative group overflow-hidden">
-                                    <img 
-                                        src={series.image} 
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                                        alt={series.title}
-                                    />
-                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <PlayCircle className="w-12 h-12 text-white/80" />
+                                onClick={() => navigate(`/series/${series.id}`)}
+                                image={series.image}
+                                title={series.title}
+                                description={series.description}
+                                accentColor="red"
+                                imageClassName="aspect-[16/9]"
+                                subtitle={
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-red-500">
+                                        OFFICIAL SERIES
+                                    </span>
+                                }
+                                footer={
+                                    <div className="flex items-center justify-between w-full">
+                                        <StatusBadge status={series.status} />
+                                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-500">
+                                            Watch Trailer <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                        </div>
                                     </div>
-                                    <div className="absolute top-4 left-4">
-                                        <span className="px-3 py-1 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-full">SERIES</span>
-                                    </div>
-                                </div>
-                                <div className="p-6">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h4 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{series.title}</h4>
-                                        <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{series.releaseDate}</span>
-                                    </div>
-                                    <p className="text-sm text-gray-500 mb-4">{series.fullText}</p>
-                                    <div className="flex items-center gap-2">
-                                         <span className="text-[9px] font-bold px-2 py-0.5 border border-white/10 rounded text-gray-400 uppercase tracking-widest">{series.status}</span>
-                                    </div>
-                                </div>
-                            </motion.div>
+                                }
+                            />
                         ))}
                     </div>
-                </>
+                </section>
             )}
 
             {(!sub.games.length && (!sub.series || !sub.series.length)) && (
-                <div className="py-20 text-center border border-dashed border-white/10 rounded-3xl">
-                    <p className="text-gray-500 italic">This subsidiary currently has no public project logs.</p>
+                <div className="py-24 text-center border-2 border-dashed border-white/5 rounded-[3rem] opacity-40">
+                    <p className="text-gray-500 font-mono text-sm uppercase tracking-widest">No public projects currently logged for this division.</p>
                 </div>
             )}
         </motion.div>

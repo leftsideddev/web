@@ -5,12 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { 
     LayoutDashboard, Gamepad2, Newspaper, TrendingUp, Users, MousePointer2, 
     Plus, Edit3, Trash2, CheckCircle, Save, X, ArrowLeft, BarChart3, Clock,
-    Monitor, Globe, ShieldAlert, Activity, Cpu, CloudLightning
+    Monitor, Globe, ShieldAlert, Activity, Cpu, CloudLightning, Cloud, CloudOff, RefreshCw
 } from 'lucide-react';
 import { Game, BlogPost, GameStatus } from '../types';
+import { ALLOWED_ADMINS } from '../constants';
 
 const Admin: React.FC = () => {
-    const { data, updateGames, updateBlog, adminUser, logout } = useDatabase();
+    const { data, isSynced, updateGames, updateBlog, syncWithCloud, adminUser, logout } = useDatabase();
     const { isDarkMode } = useTheme();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<'dash' | 'games' | 'blog'>('dash');
@@ -18,13 +19,16 @@ const Admin: React.FC = () => {
     // State for forms
     const [editingGame, setEditingGame] = useState<Game | null>(null);
     const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
+    const [isSyncing, setIsSyncing] = useState(false);
 
     useEffect(() => {
-        if (!adminUser) navigate('/');
+        if (!adminUser || !ALLOWED_ADMINS.includes(adminUser.email)) {
+            navigate('/');
+        }
         window.scrollTo(0, 0);
     }, [adminUser, navigate]);
 
-    if (!adminUser) return null;
+    if (!adminUser || !ALLOWED_ADMINS.includes(adminUser.email)) return null;
 
     // --- MOCK ANALYTICS DATA ---
     const stats = [
@@ -35,6 +39,12 @@ const Admin: React.FC = () => {
     ];
 
     // --- HANDLERS ---
+    const handleManualSync = async () => {
+        setIsSyncing(true);
+        await syncWithCloud();
+        setTimeout(() => setIsSyncing(false), 1000);
+    };
+
     const saveGame = (game: Game) => {
         const isNew = !data.games.find(g => g.id === game.id);
         let newGames;
@@ -71,19 +81,26 @@ const Admin: React.FC = () => {
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                 <div>
                     <div className="flex items-center gap-3 mb-1">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <div className={`w-2 h-2 rounded-full animate-pulse ${isSynced ? 'bg-emerald-500' : 'bg-amber-500'}`}></div>
                         <h1 className="text-4xl font-black tracking-tighter uppercase">Studio Backend</h1>
                     </div>
-                    <p className="text-gray-500 font-bold text-xs uppercase tracking-widest">
-                        System Access: <span className="text-emerald-500">{adminUser.email}</span>
-                    </p>
+                    <div className="flex items-center gap-2">
+                         <p className="text-gray-500 font-bold text-xs uppercase tracking-widest">
+                            System Access: <span className="text-emerald-500">{adminUser.email}</span>
+                        </p>
+                        <span className="text-gray-700">•</span>
+                        <div className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest ${isSynced ? 'text-emerald-500' : 'text-amber-500'}`}>
+                            {isSynced ? <Cloud className="w-3 h-3" /> : <CloudOff className="w-3 h-3" />}
+                            {isSynced ? 'Cloud Linked' : 'Offline Mode'}
+                        </div>
+                    </div>
                 </div>
                 
                 <div className="flex bg-neutral-900 border border-white/5 rounded-2xl p-1 shadow-2xl">
                     {[
                         { id: 'dash', icon: LayoutDashboard, label: 'Metrics' },
                         { id: 'games', icon: Gamepad2, label: 'Projects' },
-                        { id: 'blog', icon: Newspaper, label: 'Dispatches' }
+                        { id: 'blog', icon: Newspaper, label: 'News Feed' }
                     ].map(tab => (
                         <button 
                             key={tab.id} 
@@ -101,26 +118,27 @@ const Admin: React.FC = () => {
                 {activeTab === 'dash' && (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} key="dash" className="space-y-8">
                         {/* Netlify System Status */}
-                        <div className="p-8 rounded-[2.5rem] bg-emerald-500/5 border border-emerald-500/10 flex flex-col md:flex-row justify-between items-center gap-8">
+                        <div className={`p-8 rounded-[2.5rem] border flex flex-col md:flex-row justify-between items-center gap-8 ${isSynced ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-amber-500/5 border-amber-500/10'}`}>
                             <div className="flex items-center gap-6">
-                                <div className="p-4 rounded-3xl bg-emerald-500/10 text-emerald-500">
+                                <div className={`p-4 rounded-3xl bg-white/5 transition-colors ${isSynced ? 'text-emerald-500' : 'text-amber-500'}`}>
                                     <CloudLightning className="w-8 h-8" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-black tracking-tight mb-1">Netlify Production Edge</h3>
-                                    <p className="text-sm text-gray-500 font-medium">All systems operational in <span className="text-emerald-500 font-bold">us-east-1</span> cluster.</p>
+                                    <h3 className="text-xl font-black tracking-tight mb-1">
+                                        {isSynced ? 'Insiders Backend Linked' : 'Insiders Link Interrupted'}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 font-medium">
+                                        {isSynced ? 'Synchronized with leftsidedinsiders.netlify.app' : 'Using local data repository (Persistence active)'}
+                                    </p>
                                 </div>
                             </div>
-                            <div className="flex gap-4">
-                                <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 flex items-center gap-2">
-                                    <Activity className="w-4 h-4 text-emerald-500" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Deploy: 09-2025</span>
-                                </div>
-                                <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 flex items-center gap-2">
-                                    <Cpu className="w-4 h-4 text-blue-500" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Functions: Active</span>
-                                </div>
-                            </div>
+                            <button 
+                                onClick={handleManualSync}
+                                disabled={isSyncing}
+                                className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all bg-white/5 border border-white/5 hover:bg-white/10 ${isSyncing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} /> Force Sync
+                            </button>
                         </div>
 
                         {/* Stats Grid */}
@@ -131,7 +149,7 @@ const Admin: React.FC = () => {
                                     <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-600 mb-1">{s.label}</h4>
                                     <div className="flex items-end gap-3">
                                         <span className="text-4xl font-black tracking-tighter">{s.value}</span>
-                                        <span className={`text-[10px] font-bold mb-1.5 ${s.trend.startsWith('+') || s.trend === 'Stable' ? 'text-emerald-500' : 'text-red-500'}`}>{s.trend}</span>
+                                        <span className={`text-[10px] font-bold mb.1.5 ${s.trend.startsWith('+') || s.trend === 'Stable' ? 'text-emerald-500' : 'text-red-500'}`}>{s.trend}</span>
                                     </div>
                                 </div>
                             ))}
@@ -169,7 +187,7 @@ const Admin: React.FC = () => {
                                 <div className="space-y-6">
                                     {[
                                         { user: 'vermetra@gmail.com', time: '2m ago', action: 'Update: Cardamania' },
-                                        { user: 'rktspencer@gmail.com', time: '45m ago', action: 'New Dispatch' },
+                                        { user: 'rktspencer@gmail.com', time: '45m ago', action: 'New Article' },
                                         { user: 'baddudepvp1126@gmail.com', time: '2h ago', action: 'Status Sync' },
                                         { user: 'vermetra@gmail.com', time: '5h ago', action: 'Dash Access' }
                                     ].map((log, i) => (
@@ -233,7 +251,7 @@ const Admin: React.FC = () => {
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} key="blog" className="space-y-6">
                         <div className="flex justify-between items-center mb-10">
                             <div>
-                                <h2 className="text-3xl font-black uppercase tracking-tighter">Studio Dispatches</h2>
+                                <h2 className="text-3xl font-black uppercase tracking-tighter">News Feed Management</h2>
                                 <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Public Feed Control</p>
                             </div>
                             <button 
@@ -243,7 +261,7 @@ const Admin: React.FC = () => {
                                 })}
                                 className="bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-emerald-500/20 transition-all"
                             >
-                                <Plus className="w-5 h-5" /> New Dispatch
+                                <Plus className="w-5 h-5" /> New Article
                             </button>
                         </div>
                         <div className="grid grid-cols-1 gap-4">
@@ -256,7 +274,7 @@ const Admin: React.FC = () => {
                                     </div>
                                     <div className="flex gap-3">
                                         <button onClick={() => setEditingPost(post)} className="p-4 rounded-2xl bg-white/5 hover:bg-emerald-500/10 text-emerald-500 border border-white/5 transition-all"><Edit3 className="w-5 h-5" /></button>
-                                        <button onClick={() => { if(window.confirm("Delete dispatch?")) updateBlog(data.blogPosts.filter(b => b.id !== post.id)) }} className="p-4 rounded-2xl bg-white/5 hover:bg-red-500/10 text-red-500 border border-white/5 transition-all"><Trash2 className="w-5 h-5" /></button>
+                                        <button onClick={() => { if(window.confirm("Delete article?")) updateBlog(data.blogPosts.filter(b => b.id !== post.id)) }} className="p-4 rounded-2xl bg-white/5 hover:bg-red-500/10 text-red-500 border border-white/5 transition-all"><Trash2 className="w-5 h-5" /></button>
                                     </div>
                                 </div>
                             ))}
@@ -297,11 +315,11 @@ const Admin: React.FC = () => {
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-2xl">
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-neutral-900 border border-white/10 w-full max-w-3xl rounded-[3rem] p-12 overflow-y-auto max-h-[90vh] shadow-2xl">
                         <div className="flex justify-between items-center mb-10">
-                            <h2 className="text-4xl font-black uppercase tracking-tighter">Dispatch Terminal</h2>
+                            <h2 className="text-4xl font-black uppercase tracking-tighter">Article Terminal</h2>
                             <button onClick={() => setEditingPost(null)} className="p-3 bg-white/5 rounded-2xl hover:bg-red-500/20 text-gray-500 hover:text-red-500 transition-all"><X /></button>
                         </div>
                         <div className="space-y-8">
-                            <div><label className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3 block">Dispatch Headline</label><input type="text" className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 font-bold outline-none focus:border-emerald-500" value={editingPost.title} onChange={e => setEditingPost({...editingPost, title: e.target.value})} /></div>
+                            <div><label className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3 block">Article Headline</label><input type="text" className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 font-bold outline-none focus:border-emerald-500" value={editingPost.title} onChange={e => setEditingPost({...editingPost, title: e.target.value})} /></div>
                             <div><label className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3 block">Feed Excerpt</label><input type="text" className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 font-bold" value={editingPost.excerpt} onChange={e => setEditingPost({...editingPost, excerpt: e.target.value})} /></div>
                             <div><label className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3 block">Primary Image URL</label><input type="text" className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 font-bold" value={editingPost.image} onChange={e => setEditingPost({...editingPost, image: e.target.value || ''})} /></div>
                             <div><label className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-3 block">Full Broadcast Content</label><textarea className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 h-64 font-medium resize-none" value={editingPost.content} onChange={e => setEditingPost({...editingPost, content: e.target.value})} /></div>

@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTheme, useDatabase } from '../App';
 import { GameStatus } from '../types';
+import Card from '../components/Card';
 
-const StatusBadge: React.FC<{ status: GameStatus }> = ({ status }) => {
-    const colors: Record<GameStatus, string> = {
+const StatusBadge: React.FC<{ status: GameStatus | string }> = ({ status }) => {
+    const colors: Record<string, string> = {
         'In Development': 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
         'Released': 'bg-blue-500/10 border-blue-500/30 text-blue-400',
         'Paused': 'bg-amber-500/10 border-amber-500/30 text-amber-400',
@@ -27,35 +28,60 @@ const Games: React.FC = () => {
     const { data } = useDatabase();
     const navigate = useNavigate();
 
+    const mainProjects = useMemo(() => {
+        // Exclusively show Cardamania, Bumbl, and COD:B as main studio projects.
+        // Founder projects (from subsidiaries) are removed from this flagship view.
+        const allowedIds = ['game_cardamania', 'game_bumbl', 'game_cod_battlegrounds'];
+        
+        return data.games
+            .filter(g => allowedIds.includes(g.id))
+            .sort((a, b) => {
+                // Ensure Cardamania stays at the very start
+                if (a.id === 'game_cardamania') return -1;
+                if (b.id === 'game_cardamania') return 1;
+                return a.title.localeCompare(b.title);
+            });
+    }, [data]);
+
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pb-20">
             <div className="mb-12">
                 <div className="flex items-center gap-4 mb-4">
-                    <button onClick={() => navigate('/')} className={`p-2 rounded-full transition-all ${isDarkMode ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-100 hover:bg-gray-200'}`}><ArrowLeft className="w-5 h-5" /></button>
-                    <h1 className="text-5xl font-black tracking-tighter">Main Projects</h1>
+                    <button onClick={() => navigate('/')} className={`p-2 rounded-full transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${isDarkMode ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-100 hover:bg-gray-200'}`}><ArrowLeft className="w-5 h-5" /></button>
+                    <h1 className="text-5xl font-black tracking-tighter uppercase">Main Projects</h1>
                 </div>
-                <p className="text-gray-500 max-w-xl text-lg">Flagship releases and primary development efforts by the Left-Sided core team.</p>
+                <p className="text-gray-500 max-w-xl text-lg">Explore our catalog of original titles.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {data.games.map((game) => (
-                    <motion.div 
-                        key={game.id} 
-                        whileHover={{ y: -12, scale: 1.04, boxShadow: isDarkMode ? "0 30px 60px -12px rgba(16, 185, 129, 0.3)" : "0 30px 60px -12px rgba(0, 0, 0, 0.12)" }}
-                        onClick={() => navigate(`/games/${game.id}`)}
-                        className={`cursor-pointer group relative overflow-hidden rounded-3xl border transition-colors duration-300 ${isDarkMode ? 'bg-neutral-900 border-white/5 hover:border-emerald-500/40' : 'bg-white border-gray-200 shadow-sm hover:border-emerald-500'}`}
-                    >
-                        <div className="aspect-[16/9] overflow-hidden relative">
-                            <img src={game.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={game.title} />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                            <div className="absolute top-4 right-4"><StatusBadge status={game.status} /></div>
-                        </div>
-                        <div className="p-8">
-                            <h3 className="text-2xl font-bold mb-2 transition-colors group-hover:text-emerald-400">{game.title}</h3>
-                            <p className="text-gray-500 text-sm line-clamp-2 mb-6 leading-relaxed font-medium">{game.description}</p>
-                            <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-widest">View Details <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></div>
-                        </div>
-                    </motion.div>
+            <div id="catalog" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {mainProjects.map((project) => (
+                    <Card 
+                        key={project.id}
+                        image={project.image}
+                        title={project.title}
+                        description={project.description}
+                        accentColor="emerald"
+                        onClick={() => navigate(`/games/${project.id}`)}
+                        imageClassName="aspect-[16/9]"
+                        subtitle={
+                            <div className="flex flex-wrap items-center gap-2">
+                                {(project.genres as string[]).map((genre, idx) => (
+                                    <React.Fragment key={genre}>
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{genre}</span>
+                                        {idx < (project.genres as string[]).length - 1 && <span className="opacity-30">●</span>}
+                                    </React.Fragment>
+                                ))}
+                            </div>
+                        }
+                        footer={
+                            <div className="flex items-center justify-between w-full">
+                                <StatusBadge status={project.status} />
+                                <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-500`}>
+                                    View Details <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                </div>
+                            </div>
+                        }
+                    />
                 ))}
             </div>
         </motion.div>

@@ -5,7 +5,7 @@ import { ArrowRight, Newspaper, Calendar, Search, X, Tag } from 'lucide-react';
 import { useTheme, useDatabase } from '../App';
 import Card from '../components/Card';
 
-const Blog: React.FC = () => {
+const News: React.FC = () => {
     const { isDarkMode } = useTheme();
     const { data } = useDatabase();
     const navigate = useNavigate();
@@ -45,7 +45,7 @@ const Blog: React.FC = () => {
                 <div className={`inline-flex p-3 rounded-2xl mb-4 ${isDarkMode ? 'bg-amber-500/10 text-amber-500' : 'bg-amber-50 text-amber-600'}`}>
                     <Newspaper className="w-8 h-8" />
                 </div>
-                <h1 className={`text-5xl font-extrabold mb-4 tracking-tighter ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>BLOG & NEWS</h1>
+                <h1 className={`text-5xl font-extrabold mb-4 tracking-tighter ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>NEWS & ARTICLES</h1>
                 <p className="text-xl text-gray-500 font-light">The central hub for all Left-Sided Studios announcements.</p>
             </motion.div>
 
@@ -103,7 +103,7 @@ const Blog: React.FC = () => {
                             transition={{ duration: 0.3 }}
                         >
                             <Card
-                                onClick={() => navigate(`/blog/${post.id}`)}
+                                onClick={() => navigate(`/news/${post.id}`)}
                                 image={post.image || ''}
                                 title={post.title}
                                 description={post.excerpt}
@@ -145,4 +145,4 @@ const Blog: React.FC = () => {
     );
 };
 
-export default Blog;
+export default News;

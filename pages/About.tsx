@@ -3,10 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../constants';
 import { useTheme } from '../App';
-import { History, Info, Download, Mail, Layout, Terminal, Compass, Zap, GitBranch, Share2, CheckCircle2, ArrowRight } from 'lucide-react';
+import { History, Info, Download, Mail, Layout, Terminal, Compass, Zap, GitBranch, Share2, CheckCircle2, ArrowRight, ExternalLink } from 'lucide-react';
 
-const FadeInSection: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className }) => (
+const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, id?: string }> = ({ children, className, id }) => (
     <motion.section 
+        id={id}
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -22,27 +23,34 @@ const FamilyTreeNode: React.FC<{
     type: string; 
     color: string; 
     isJoint?: boolean;
-}> = ({ name, type, color, isJoint }) => {
+    onClick?: () => void;
+}> = ({ name, type, color, isJoint, onClick }) => {
     const { isDarkMode } = useTheme();
+    
     return (
         <div 
             tabIndex={0}
             role="treeitem"
             aria-label={`${type}: ${name}`}
-            className={`flex flex-col items-center p-4 rounded-2xl border outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${isDarkMode ? 'bg-neutral-900/50 border-white/5' : 'bg-white border-gray-100 shadow-sm'} transition-all hover:scale-105 w-44 h-28 justify-center text-center relative z-10 ${isJoint ? 'ring-2 ring-orange-500/20 shadow-lg shadow-orange-500/5' : ''}`}
+            onClick={onClick}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick?.()}
+            className={`flex flex-col items-center justify-center p-4 rounded-2xl border outline-none transition-all hover:scale-105 w-full max-w-[280px] h-28 relative z-10 ${onClick ? 'cursor-pointer' : 'cursor-default'} ${isDarkMode ? 'bg-neutral-900/50 border-white/5 focus-visible:border-emerald-500' : 'bg-white border-gray-100 shadow-sm focus-visible:ring-emerald-500'} ${isJoint ? 'ring-2 ring-orange-500/20 shadow-lg shadow-orange-500/5' : ''}`}
         >
             {isJoint && (
-                <div className="absolute -top-2 bg-orange-500 text-[7px] font-black px-2 py-0.5 rounded-full text-white uppercase tracking-widest">
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-orange-500 text-[7px] font-black px-2 py-0.5 rounded-full text-white uppercase tracking-widest whitespace-nowrap">
                     Joint Venture
                 </div>
             )}
-            <span className={`text-[8px] font-black uppercase tracking-[0.2em] mb-1 ${color}`}>{type}</span>
-            <span className="text-sm font-bold tracking-tight">{name}</span>
+            <span className={`text-[8px] font-black uppercase tracking-[0.2em] mb-1.5 ${color}`}>
+                {type}
+            </span>
+            <span className={`text-sm font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                {name}
+            </span>
         </div>
     );
 };
 
-// Tooltip helper component for Timeline
 const TimelineTooltip: React.FC<{ content: string }> = ({ content }) => {
     const { isDarkMode } = useTheme();
     return (
@@ -61,25 +69,17 @@ const TimelineTooltip: React.FC<{ content: string }> = ({ content }) => {
 const About: React.FC = () => {
     const { isDarkMode } = useTheme();
     const navigate = useNavigate();
-    const [downloadingAsset, setDownloadingAsset] = useState<string | null>(null);
+    const [downloadingAsset, setDownloadingAsset] = useState<boolean>(false);
     const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
 
-    const handleDownload = (e: React.MouseEvent, label: string) => {
-        e.preventDefault();
-        setDownloadingAsset(label);
-        setTimeout(() => setDownloadingAsset(null), 4000);
-    };
-
-    // Extra context for tooltips
     const timelineContexts = [
-        "The studio's soul was forged in the summer of 2023. DaRealSansYT and RocketBlasts visited Vermetra's house for a week, and while hanging out, the team conceptualized a game centered around Nintendo's Pikmin, which became the spark for LSS.",
-        "This expansion allowed for multi-genre development, spanning horror, RPGs, and action titles simultaneously.",
-        "The unified platform serves as a single source of truth for project logs, press assets, and community communication."
+        "The studio's soul was forged in the summer of 2023. DaRealSansYT and RocketBlasts visited Vermetra's house for a week, conceptualizing the LSS journey.",
+        "Expansion into labels like ANdE allowed for multi-genre development across horror, RPGs, and action titles.",
+        "The unified platform centralization serves as a single source of truth for the studio's global operations."
     ];
 
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-6xl mx-auto py-12 pb-32 px-4">
-            {/* Download Notification Toast */}
             <AnimatePresence>
                 {downloadingAsset && (
                     <motion.div 
@@ -89,50 +89,44 @@ const About: React.FC = () => {
                         className="fixed bottom-10 left-1/2 z-[100] flex items-center gap-3 px-6 py-4 bg-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 font-bold"
                     >
                         <CheckCircle2 className="w-5 h-5" />
-                        <span>Download started for "{downloadingAsset}" placeholder...</span>
+                        <span>Redirecting to External Source...</span>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Hero Section */}
-            <header className="text-center mb-24">
+            <header className="flex flex-col items-center text-center mb-32">
                 <motion.h1 
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ 
-                        duration: 1.2,
-                        ease: "easeOut"
-                    }}
-                    className="text-7xl md:text-8xl font-black tracking-tighter mb-8 bg-gradient-to-r from-emerald-400 via-emerald-500 to-green-600 bg-clip-text text-transparent uppercase"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-7xl md:text-8xl font-black tracking-tighter text-emerald-500 uppercase mb-8"
                 >
                     ABOUT US
                 </motion.h1>
+                
                 <motion.p 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                    className="text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed italic"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed italic"
                 >
                     "{db.about.text}"
                 </motion.p>
             </header>
 
-            {/* Core Values */}
             <FadeInSection className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
                 <div className={`p-10 rounded-3xl border transition-all hover:border-emerald-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
                     <Compass className="w-10 h-10 text-emerald-500 mb-8" />
-                    <h2 className="text-2xl font-black uppercase tracking-tight mb-4">Philosophy</h2>
+                    <h2 className="text-2xl font-black uppercase tracking-tight mb-4 text-white">Philosophy</h2>
                     <p className="text-gray-500 leading-relaxed text-lg">{db.about.philosophy}</p>
                 </div>
                 <div className={`p-10 rounded-3xl border transition-all hover:border-purple-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
                     <Zap className="w-10 h-10 text-purple-500 mb-8" />
-                    <h2 className="text-2xl font-black uppercase tracking-tight mb-4">Mission</h2>
+                    <h2 className="text-2xl font-black uppercase tracking-tight mb-4 text-white">Mission</h2>
                     <p className="text-gray-500 leading-relaxed text-lg">{db.about.mission}</p>
                 </div>
             </FadeInSection>
 
-            {/* Timeline Section */}
-            <FadeInSection className="mb-32">
+            <FadeInSection id="timeline" className="mb-32">
                 <div className="flex items-center gap-3 mb-16">
                     <History className="w-8 h-8 text-blue-500" />
                     <h2 className="text-3xl font-black uppercase tracking-tight">Timeline of Growth</h2>
@@ -145,88 +139,72 @@ const About: React.FC = () => {
                             onMouseEnter={() => setActiveTooltip(i)}
                             onMouseLeave={() => setActiveTooltip(null)}
                         >
-                            <div className="absolute left-0 top-1 w-[35px] h-[35px] rounded-full bg-neutral-900 border-2 border-emerald-500 flex items-center justify-center text-[10px] font-bold transition-all group-hover:bg-emerald-500 group-hover:text-black group-hover:shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                            <div className="absolute left-0 top-1 w-[35px] h-[35px] rounded-full bg-neutral-900 border-2 border-emerald-500 flex items-center justify-center text-[10px] font-bold transition-all group-hover:bg-emerald-500 group-hover:text-black">
                                 {event.year}
                             </div>
                             <div className="relative">
                                 <h3 className="text-2xl font-bold mb-2 transition-colors group-hover:text-emerald-400">{event.event}</h3>
                                 <AnimatePresence>
                                     {activeTooltip === i && (
-                                        <TimelineTooltip content={timelineContexts[i] || "Additional internal documentation pending release."} />
+                                        <TimelineTooltip content={timelineContexts[i] || "Documentation pending."} />
                                     )}
                                 </AnimatePresence>
                             </div>
-                            <motion.div 
-                                whileHover={{ 
-                                    scale: 1.02, 
-                                    borderColor: isDarkMode ? "rgba(16, 185, 129, 0.4)" : "rgba(16, 185, 129, 0.6)" 
-                                }}
-                                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                                className={`text-gray-500 text-lg leading-relaxed max-w-3xl transition-all duration-300 p-4 rounded-2xl border border-transparent ${isDarkMode ? 'bg-white/5' : 'bg-gray-50/50'}`}
-                                style={{ willChange: 'transform, border-color' }}
-                            >
+                            <p className={`text-gray-500 text-lg leading-relaxed max-w-3xl p-4 rounded-2xl border border-transparent ${isDarkMode ? 'bg-white/5' : 'bg-gray-50/50'}`}>
                                 {event.description}
-                            </motion.div>
+                            </p>
                         </div>
                     ))}
                 </div>
             </FadeInSection>
 
-            {/* Family Tree Section */}
-            <FadeInSection className="mb-32" aria-label="Studio Ecosystem Hierarchy">
+            <FadeInSection id="network" className="mb-32" aria-label="Studio Ecosystem Hierarchy">
                 <div className="flex items-center gap-3 mb-12">
                     <GitBranch className="w-8 h-8 text-emerald-500" />
                     <h2 className="text-3xl font-black uppercase tracking-tight">Studio Ecosystem</h2>
                 </div>
                 
-                <div className="relative p-12 rounded-[3rem] border border-white/5 bg-black/5 overflow-hidden">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-y-16" role="tree" aria-label="Visual organizational structure of Left-Sided Studios and partners">
-                        {/* LEFT SIDED BRANCH */}
-                        <div className="md:col-span-8 flex flex-col items-center">
-                            <FamilyTreeNode name="Left-Sided Studios" type="Parent Studio" color="text-emerald-500" />
-                            
+                <div className="relative p-6 md:p-12 rounded-[3rem] border border-white/5 bg-black/5 overflow-hidden">
+                    <div className="flex flex-col items-center gap-16" role="tree" aria-label="Organizational structure">
+                        
+                        {/* Parent Node */}
+                        <div className="flex flex-col items-center w-full">
+                            <FamilyTreeNode name="Left-Sided Studios" type="Parent Studio" color="text-emerald-500" onClick={() => navigate('/')} />
                             <div className="w-full flex justify-center py-4" aria-hidden="true">
                                 <div className="h-12 w-px bg-gradient-to-b from-emerald-500 to-transparent"></div>
                             </div>
-
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-                                <FamilyTreeNode name="ANdE Studios" type="Subsidiary" color="text-purple-500" />
-                                <FamilyTreeNode name="Gotch-ya Studios" type="Subsidiary" color="text-purple-500" />
-                                <FamilyTreeNode name="Bomb Banana" type="Subsidiary" color="text-purple-500" />
-                                <FamilyTreeNode name="Endgame Studios" type="Subsidiary" color="text-purple-500" />
-                            </div>
                         </div>
 
-                        {/* CITADEL BRANCH */}
-                        <div className="md:col-span-4 flex flex-col items-center">
-                            <div className="mb-4 text-[10px] font-black uppercase tracking-widest text-gray-600 opacity-50">Strategic Alignment</div>
-                            <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" />
-                            <div className="w-full flex justify-center py-4" aria-hidden="true">
-                                <div className="h-12 w-px bg-gradient-to-b from-blue-500 to-transparent"></div>
-                            </div>
+                        {/* Subsidiaries Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                            <FamilyTreeNode name="ANdE Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/sub_ande')} />
+                            <FamilyTreeNode name="Gotch-ya Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/sub_gotchya')} />
+                            <FamilyTreeNode name="Bomb Banana" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/sub_bomb_banana')} />
+                            <FamilyTreeNode name="Endgame Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/sub_endgame')} />
                         </div>
 
-                        {/* SHARED ASSET (SKULLIX) */}
-                        <div className="md:col-span-12 flex flex-col items-center pt-16 relative">
-                            <div className="absolute top-0 left-1/4 right-1/4 h-16 border-t-2 border-x-2 border-dashed border-white/10 rounded-t-[3rem] -mt-2" aria-hidden="true"></div>
-                            
-                            <div className="flex items-center gap-3 mb-6">
-                                <Share2 className="w-4 h-4 text-orange-500" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Shared Production Unit</span>
-                            </div>
-                            
-                            <FamilyTreeNode name="Skullix Media Group" type="Media & Production" color="text-orange-500" isJoint={true} />
+                        {/* Strategic Partners Row */}
+                        <div className="w-full flex flex-col md:flex-row items-center justify-center mt-8 gap-8 md:gap-32">
+                             <div className="flex flex-col items-center">
+                                <div className="mb-4 text-[10px] font-black uppercase tracking-widest text-blue-500 opacity-60">Strategic Alignment</div>
+                                <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" onClick={() => navigate('/partners/partner_citadel')} />
+                             </div>
+                             
+                             <div className="flex flex-col items-center relative">
+                                <div className="hidden md:block absolute -top-8 left-1/2 -translate-x-1/2 h-8 w-px border-l border-dashed border-white/20" aria-hidden="true"></div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <Share2 className="w-4 h-4 text-orange-500" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Shared Production</span>
+                                </div>
+                                <FamilyTreeNode name="Skullix Media Group" type="Media & Production" color="text-orange-500" isJoint={true} onClick={() => navigate('/network/sub_skullix')} />
+                             </div>
                         </div>
+
                     </div>
                 </div>
-                
-                <p className="text-center text-xs text-gray-500 mt-12 font-medium italic opacity-60">
-                    Skullix Media Group operates as a joint venture, providing specialized media production support for both the Left-Sided network and Citadel Studios initiatives.
-                </p>
             </FadeInSection>
 
-            {/* Press Kit Hub */}
-            <FadeInSection className={`p-12 md:p-20 rounded-[3rem] border transition-shadow hover:shadow-emerald-500/5 ${isDarkMode ? 'bg-neutral-900 border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-2xl'}`}>
+            <FadeInSection id="press" className={`p-12 md:p-20 rounded-[3rem] border transition-shadow hover:shadow-emerald-500/5 ${isDarkMode ? 'bg-neutral-900 border-white/5 shadow-2xl' : 'bg-white border-gray-100 shadow-2xl'}`}>
                 <div className="flex flex-col md:flex-row gap-16">
                     <div className="md:w-1/3">
                         <div className="flex items-center gap-3 mb-8 text-emerald-500">
@@ -234,32 +212,35 @@ const About: React.FC = () => {
                             <h2 className="text-xs font-black uppercase tracking-[0.3em]">Media Resources</h2>
                         </div>
                         <h3 className="text-4xl font-black tracking-tighter mb-6 leading-none">Press Kit & Branding</h3>
-                        <p className="text-gray-500 mb-10 text-sm">Download official logos, screenshots, and studio descriptions for use in your content.</p>
+                        <p className="text-gray-500 mb-10 text-sm">Download official logos and assets.</p>
                         <div className="space-y-4">
-                            {db.pressAssets.map((asset, i) => (
-                                <a 
-                                    key={i} 
-                                    href={asset.url} 
-                                    onClick={(e) => asset.type === 'Brand Package' || asset.url === '#' ? handleDownload(e, asset.label) : null}
-                                    aria-label={`Download ${asset.label}`}
-                                    className={`flex items-center justify-between p-4 rounded-2xl border outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 transition-all ${isDarkMode ? 'bg-white/5 border-white/5 hover:border-emerald-500/50' : 'bg-gray-50 border-gray-200 hover:border-emerald-500'}`}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500">
-                                            <Layout className="w-4 h-4" />
+                            {db.pressAssets.map((asset, i) => {
+                                const isPressKit = asset.label.toLowerCase().includes('press kit');
+                                return (
+                                    <a 
+                                        key={i} 
+                                        href={asset.url} 
+                                        target={isPressKit ? "_blank" : "_self"}
+                                        rel={isPressKit ? "noreferrer" : ""}
+                                        className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isDarkMode ? 'bg-white/5 border-white/5 hover:border-emerald-500/50' : 'bg-gray-50 border-gray-200 hover:border-emerald-500'}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500">
+                                                <Layout className="w-4 h-4" />
+                                            </div>
+                                            <span className="text-xs font-bold uppercase tracking-widest">{asset.label}</span>
                                         </div>
-                                        <span className="text-xs font-bold uppercase tracking-widest">{asset.label}</span>
-                                    </div>
-                                    <Download className="w-4 h-4 text-emerald-500" />
-                                </a>
-                            ))}
+                                        {isPressKit ? <ExternalLink className="w-4 h-4 text-emerald-500" /> : <Download className="w-4 h-4 text-emerald-500" />}
+                                    </a>
+                                );
+                            })}
                         </div>
                     </div>
                     <div className="md:w-2/3 space-y-12">
                         <div>
                             <h4 className="text-xs font-black uppercase tracking-widest text-emerald-500 mb-4">Brief Bio</h4>
                             <p className="text-gray-400 text-xl font-light leading-relaxed">
-                                Left-Sided Studios is an independent collective based in the digital sphere. We specialize in narrative-heavy action and simulation titles, utilizing our network of niche subsidiaries to deliver specialized gameplay across horror, RPG, and platforming genres.
+                                Left-Sided Studios is an independent collective specializing in narrative-heavy action and simulation titles, utilizing a network of labels to deliver unique interactive experiences.
                             </p>
                         </div>
                         <div className="grid grid-cols-2 gap-8 py-8 border-y border-white/5">
@@ -273,7 +254,7 @@ const About: React.FC = () => {
                             </div>
                         </div>
                         <div className="pt-8">
-                             <button onClick={() => navigate('/contact')} className="group flex items-center gap-3 text-white bg-emerald-600 hover:bg-emerald-700 px-8 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl shadow-emerald-500/20 outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/50">
+                             <button onClick={() => navigate('/contact')} className="group flex items-center gap-3 text-white bg-emerald-600 hover:bg-emerald-700 px-8 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl shadow-emerald-500/20">
                                 <Mail className="w-4 h-4" /> Contact Us
                                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                              </button>

@@ -1,4 +1,3 @@
-
 export type GameStatus = 'In Development' | 'Released' | 'Paused' | 'Alpha' | 'Beta' | 'Canceled';
 
 export interface Milestone {
@@ -14,6 +13,7 @@ export interface Game {
     description: string;
     fullText: string;
     image: string;
+    gallery?: string[]; 
     releaseDate: string;
     link: string | null;
     status: GameStatus;
@@ -42,7 +42,7 @@ export interface Subsidiary {
     name: string;
     tagline: string;
     type: SubsidiaryType;
-    owner?: string; // Name of the founder who owns the imprint
+    owner?: string; 
     description: string;
     fullText: string;
     image: string;
@@ -122,7 +122,9 @@ export interface BlogPost {
     excerpt: string;
     content: string;
     image?: string;
+    gallery?: string[];
     relatedGameIds?: string[];
+    tags?: string[];
 }
 
 export interface DB {

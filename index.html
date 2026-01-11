@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Primary Meta Tags -->
-    <title>Left-Sided Studios</title>
+    <title>Left Sided Studios</title>
     <meta name="description" content="Left Sided Studios - Left-Sided Studios Hub for everything by us!">
 
     <!-- Open Graph / Discord / Facebook -->
@@ -41,7 +42,7 @@
             overflow-x: hidden;
         }
 
-        /* Dark Mode Overlay */
+        /* Dark/Light Mode Overlays */
         body::before {
             content: '';
             position: fixed;
@@ -52,7 +53,7 @@
             z-index: -1;
             background-image: radial-gradient(circle at center, 
                 rgba(10, 10, 10, 0) 0%,      
-                rgba(10, 10, 10, 0.5) 100%   
+                rgba(10, 10, 10, 0.8) 100%   
             );
             transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
             pointer-events: none;
@@ -67,7 +68,7 @@
         body.light-mode::before {
             background-image: radial-gradient(circle at center, 
                 rgba(247, 247, 247, 0) 0%,      
-                rgba(247, 247, 247, 0.5) 100%   
+                rgba(247, 247, 247, 0.9) 100%   
             );
         }
 
@@ -78,6 +79,18 @@
         
         body.light-mode ::-webkit-scrollbar-thumb { background: #bbb; }
         body.light-mode ::-webkit-scrollbar-thumb:hover { background: #999; }
+
+        /* Smooth focus states */
+        *:focus-visible {
+            outline: 2px solid #10b981;
+            outline-offset: 4px;
+        }
+
+        /* Markdown Overrides */
+        .prose h1, .prose h2, .prose h3 { font-weight: 900 !important; text-transform: uppercase; letter-spacing: -0.025em; }
+        .prose a { color: #10b981; text-decoration: none; font-weight: 800; }
+        .prose a:hover { text-decoration: underline; }
+        .prose blockquote { border-left-color: #10b981; font-style: italic; color: #9ca3af; }
     </style>
 <script type="importmap">
 {
@@ -89,7 +102,10 @@
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
     "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
     "vite": "https://aistudiocdn.com/vite@^7.2.4",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
+    "react-markdown": "https://esm.sh/react-markdown@^9.0.0",
+    "remark-gfm": "https://esm.sh/remark-gfm@^4.0.0"
   }
 }
 </script>

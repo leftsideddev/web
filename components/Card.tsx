@@ -2,15 +2,53 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../App';
 
+const CardSchemes = {
+  emerald: {
+    glow: "rgba(16, 185, 129, 0.3)",
+    text: "text-emerald-500",
+    border: "hover:border-emerald-500/40"
+  },
+  blue: {
+    glow: "rgba(59, 130, 246, 0.3)",
+    text: "text-blue-500",
+    border: "hover:border-blue-500/40"
+  },
+  purple: {
+    glow: "rgba(168, 85, 247, 0.3)",
+    text: "text-purple-500",
+    border: "hover:border-purple-500/40"
+  },
+  amber: {
+    glow: "rgba(245, 158, 11, 0.4)",
+    text: "text-amber-500",
+    border: "hover:border-amber-500/40"
+  },
+  red: {
+    glow: "rgba(239, 68, 68, 0.3)",
+    text: "text-red-500",
+    border: "hover:border-red-500/40"
+  },
+  gray: {
+    glow: "rgba(156, 163, 175, 0.3)",
+    text: "text-gray-400",
+    border: "hover:border-white/20"
+  }
+};
+
 interface CardProps {
     onClick?: () => void;
     image: string;
     title: string;
     description: string;
-    subtitle?: string;
+    subtitle?: React.ReactNode;
+    subtitlePosition?: 'body' | 'top-left-overlay';
     footer?: React.ReactNode;
     overlayColor?: string;
-    accentColor?: 'emerald' | 'blue' | 'purple' | 'amber';
+    accentColor?: keyof typeof CardSchemes;
+    ariaLabel?: string;
+    className?: string;
+    imageClassName?: string;
+    scalingMode?: 'auto' | 'pixelated' | 'crisp-edges';
 }
 
 const Card: React.FC<CardProps> = ({ 
@@ -19,40 +57,21 @@ const Card: React.FC<CardProps> = ({
     title, 
     description, 
     subtitle, 
+    subtitlePosition = 'body',
     footer, 
     overlayColor,
-    accentColor = 'emerald'
+    accentColor = 'emerald',
+    ariaLabel,
+    className = "",
+    imageClassName = "h-48",
+    scalingMode = 'auto'
 }) => {
     const { isDarkMode } = useTheme();
-    
-    const themes = {
-        emerald: {
-            glow: 'rgba(16, 185, 129, 0.3)',
-            text: 'text-emerald-500',
-            hoverText: 'group-hover:text-emerald-500',
-            border: 'group-hover:border-emerald-500/40'
-        },
-        blue: {
-            glow: 'rgba(59, 130, 246, 0.3)',
-            text: 'text-blue-500',
-            hoverText: 'group-hover:text-blue-500',
-            border: 'group-hover:border-blue-500/40'
-        },
-        purple: {
-            glow: 'rgba(168, 85, 247, 0.3)',
-            text: 'text-purple-500',
-            hoverText: 'group-hover:text-purple-500',
-            border: 'group-hover:border-purple-500/40'
-        },
-        amber: {
-            glow: 'rgba(245, 158, 11, 0.4)',
-            text: 'text-amber-500',
-            hoverText: 'group-hover:text-amber-500',
-            border: 'group-hover:border-amber-500/40'
-        }
-    };
+    const activeTheme = CardSchemes[accentColor];
 
-    const activeTheme = themes[accentColor];
+    const imageStyle: React.CSSProperties = {
+        imageRendering: scalingMode === 'pixelated' ? 'pixelated' : scalingMode === 'crisp-edges' ? 'crisp-edges' : 'auto'
+    };
 
     return (
         <motion.div 
@@ -65,20 +84,30 @@ const Card: React.FC<CardProps> = ({
             }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
             onClick={onClick}
-            className={`cursor-pointer group relative overflow-hidden rounded-3xl border transition-colors duration-300 flex flex-col h-full ${
+            role="button"
+            aria-label={ariaLabel || `View ${title}`}
+            tabIndex={0}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick?.()}
+            className={`cursor-pointer group relative overflow-hidden rounded-3xl border transition-colors duration-300 flex flex-col h-full outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
                 isDarkMode 
                     ? `bg-neutral-900 border-white/5 ${activeTheme.border}` 
                     : `bg-white border-gray-200 shadow-sm ${activeTheme.border.replace('/40', '')}`
-            }`}
+            } ${className}`}
         >
-            <div className="h-48 overflow-hidden relative">
+            <div className={`${imageClassName} overflow-hidden relative flex-shrink-0`}>
                 {overlayColor && (
                     <div className={`absolute inset-0 mix-blend-overlay z-10 ${overlayColor}`}></div>
                 )}
+                {subtitle && subtitlePosition === 'top-left-overlay' && (
+                    <div className="absolute top-4 left-4 z-20">
+                        {subtitle}
+                    </div>
+                )}
                 <img 
                     src={image} 
+                    style={imageStyle}
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" 
-                    alt={title}
+                    alt=""
                     onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = `https://placehold.co/800x400/1e293b/FFFFFF?text=${title.replace(/\s/g, '+')}`;
@@ -86,12 +115,16 @@ const Card: React.FC<CardProps> = ({
                 />
             </div>
             
-            <div className="p-6 flex-grow">
-                <h3 className={`text-2xl font-bold mb-1 transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'} ${activeTheme.hoverText}`}>{title}</h3>
-                {subtitle && (
-                    <p className={`text-xs font-mono uppercase tracking-widest mb-4 transition-colors ${activeTheme.text}`}>{subtitle}</p>
-                )}
-                <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <div className="p-6 flex-grow flex flex-col">
+                <div className="flex flex-wrap items-baseline gap-x-2 mb-2">
+                    <h3 className={`text-2xl font-bold transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:${activeTheme.text}`}>{title}</h3>
+                    {subtitle && subtitlePosition === 'body' && (
+                        <div className={`text-[10px] font-black uppercase tracking-widest transition-colors ${activeTheme.text} opacity-60`}>
+                          {subtitle}
+                        </div>
+                    )}
+                </div>
+                <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2`}>
                     {description}
                 </p>
             </div>
