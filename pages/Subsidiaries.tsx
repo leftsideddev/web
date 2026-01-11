@@ -1,50 +1,101 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, User, Shield, Zap } from 'lucide-react';
 import { useTheme } from '../App';
 import { db } from '../constants';
 import Card from '../components/Card';
+import { Subsidiary } from '../types';
 
 const Subsidiaries: React.FC = () => {
     const { isDarkMode } = useTheme();
     const navigate = useNavigate();
 
+    const imprints = db.subsidiaries.filter(s => s.type === 'Founder Imprint');
+    const officials = db.subsidiaries.filter(s => s.type === 'Official Subsidiary' || s.type === 'Production Unit');
+
+    const renderSubCard = (sub: Subsidiary) => (
+        <Card
+            key={sub.id}
+            onClick={() => navigate(`/subsidiaries/${sub.id}`)}
+            image={sub.image}
+            title={sub.name}
+            subtitle={sub.tagline}
+            description={sub.description}
+            overlayColor={sub.type === 'Founder Imprint' ? "bg-emerald-900/10" : "bg-purple-900/10"}
+            footer={
+                <>
+                    <div className="flex flex-col">
+                        <span className={`text-[9px] font-black uppercase tracking-widest ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                            {sub.type === 'Founder Imprint' ? 'Owned By' : sub.type}
+                        </span>
+                        {sub.owner && (
+                            <span className="text-[10px] font-bold text-emerald-500">
+                                {sub.owner}
+                            </span>
+                        )}
+                    </div>
+                    <span className={`text-xs flex items-center gap-1 font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                        View Details <ArrowRight className="w-3 h-3" />
+                    </span>
+                </>
+            }
+        />
+    );
+
     return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-             <div className="mb-12 flex items-center gap-4">
-                <button 
-                    onClick={() => navigate('/')} 
-                    className={`p-2 rounded-full ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-gray-100 hover:bg-gray-200 text-black'}`}
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </button>
-                <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Subsidiaries</h1>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="pb-32">
+             <div className="mb-16">
+                <div className="flex items-center gap-4 mb-4">
+                    <button 
+                        onClick={() => navigate('/')} 
+                        className={`p-2 rounded-full ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-gray-100 hover:bg-gray-200 text-black'}`}
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
+                    <h1 className="text-5xl font-black tracking-tighter">Ecosystem</h1>
+                </div>
+                <p className="text-gray-500 max-w-2xl text-lg">
+                    The Left-Sided umbrella encompasses both official studio branches and personal creative projects led by our founders.
+                </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {db.subsidiaries.map((sub) => (
-                    <Card
-                        key={sub.id}
-                        onClick={() => navigate(`/subsidiaries/${sub.id}`)}
-                        image={sub.image}
-                        title={sub.name}
-                        subtitle={sub.tagline}
-                        description={sub.description}
-                        overlayColor="bg-purple-900/20"
-                        footer={
-                            <>
-                                <span className={`text-xs border px-2 py-1 rounded-full ${isDarkMode ? 'border-gray-700' : 'border-gray-300'}`}>
-                                    {sub.games.length} Projects
-                                </span>
-                                <span className={`text-xs flex items-center gap-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                                    View Studio <ArrowRight className="w-3 h-3" />
-                                </span>
-                            </>
-                        }
-                    />
-                ))}
-            </div>
+            {/* Official Units */}
+            <section className="mb-24">
+                <div className="flex items-center gap-3 mb-8">
+                    <Shield className="w-6 h-6 text-purple-500" />
+                    <h2 className="text-2xl font-black uppercase tracking-tight">Official Subsidiaries</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {officials.map(renderSubCard)}
+                </div>
+            </section>
+
+            {/* Founder Projects */}
+            <section>
+                <div className="flex items-center gap-3 mb-8">
+                    <User className="w-6 h-6 text-emerald-500" />
+                    <h2 className="text-2xl font-black uppercase tracking-tight">Founder Projects</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {imprints.map(renderSubCard)}
+                </div>
+            </section>
+
+            <section className={`mt-32 p-12 md:p-16 rounded-[3rem] border flex flex-col md:flex-row items-center gap-12 text-center md:text-left ${
+                isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-gray-50 border-gray-200'
+            }`}>
+                <div className="p-6 rounded-full bg-emerald-500/10 text-emerald-500">
+                    <Zap className="w-12 h-12" />
+                </div>
+                <div className="flex-grow">
+                    <h2 className="text-3xl font-black mb-4 tracking-tight uppercase">Strategic Alignment</h2>
+                    <p className="text-gray-500 font-medium text-lg leading-relaxed">
+                        Founder labels allow our team members to explore individual artistic visions while maintaining the high quality and resource support of the Left-Sided core.
+                    </p>
+                </div>
+            </section>
         </motion.div>
     );
 };

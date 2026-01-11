@@ -10,17 +10,66 @@ interface CardProps {
     subtitle?: string;
     footer?: React.ReactNode;
     overlayColor?: string;
+    accentColor?: 'emerald' | 'blue' | 'purple' | 'amber';
 }
 
-const Card: React.FC<CardProps> = ({ onClick, image, title, description, subtitle, footer, overlayColor }) => {
+const Card: React.FC<CardProps> = ({ 
+    onClick, 
+    image, 
+    title, 
+    description, 
+    subtitle, 
+    footer, 
+    overlayColor,
+    accentColor = 'emerald'
+}) => {
     const { isDarkMode } = useTheme();
+    
+    const themes = {
+        emerald: {
+            glow: 'rgba(16, 185, 129, 0.3)',
+            text: 'text-emerald-500',
+            hoverText: 'group-hover:text-emerald-500',
+            border: 'group-hover:border-emerald-500/40'
+        },
+        blue: {
+            glow: 'rgba(59, 130, 246, 0.3)',
+            text: 'text-blue-500',
+            hoverText: 'group-hover:text-blue-500',
+            border: 'group-hover:border-blue-500/40'
+        },
+        purple: {
+            glow: 'rgba(168, 85, 247, 0.3)',
+            text: 'text-purple-500',
+            hoverText: 'group-hover:text-purple-500',
+            border: 'group-hover:border-purple-500/40'
+        },
+        amber: {
+            glow: 'rgba(245, 158, 11, 0.4)',
+            text: 'text-amber-500',
+            hoverText: 'group-hover:text-amber-500',
+            border: 'group-hover:border-amber-500/40'
+        }
+    };
+
+    const activeTheme = themes[accentColor];
 
     return (
         <motion.div 
-            whileHover={{ y: -8, scale: 1.01 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            whileHover={{ 
+                y: -12, 
+                scale: 1.04, 
+                boxShadow: isDarkMode 
+                    ? `0 30px 60px -12px ${activeTheme.glow}` 
+                    : "0 30px 60px -12px rgba(0, 0, 0, 0.12)" 
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
             onClick={onClick}
-            className={`cursor-pointer rounded-xl overflow-hidden border shadow-sm transition-all duration-300 relative group h-full flex flex-col ${isDarkMode ? 'bg-neutral-900 border-white/5 shadow-white/5' : 'bg-white border-gray-200 shadow-gray-200'}`}
+            className={`cursor-pointer group relative overflow-hidden rounded-3xl border transition-colors duration-300 flex flex-col h-full ${
+                isDarkMode 
+                    ? `bg-neutral-900 border-white/5 ${activeTheme.border}` 
+                    : `bg-white border-gray-200 shadow-sm ${activeTheme.border.replace('/40', '')}`
+            }`}
         >
             <div className="h-48 overflow-hidden relative">
                 {overlayColor && (
@@ -28,7 +77,7 @@ const Card: React.FC<CardProps> = ({ onClick, image, title, description, subtitl
                 )}
                 <img 
                     src={image} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" 
                     alt={title}
                     onError={(e) => {
                         const target = e.target as HTMLImageElement;
@@ -38,9 +87,9 @@ const Card: React.FC<CardProps> = ({ onClick, image, title, description, subtitl
             </div>
             
             <div className="p-6 flex-grow">
-                <h3 className={`text-2xl font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
+                <h3 className={`text-2xl font-bold mb-1 transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'} ${activeTheme.hoverText}`}>{title}</h3>
                 {subtitle && (
-                    <p className="text-blue-500 text-xs font-mono uppercase tracking-widest mb-4">{subtitle}</p>
+                    <p className={`text-xs font-mono uppercase tracking-widest mb-4 transition-colors ${activeTheme.text}`}>{subtitle}</p>
                 )}
                 <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                     {description}

@@ -18,7 +18,7 @@ const PartnerDetail: React.FC = () => {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto">
             <div className="mb-8 flex items-center gap-3 text-sm text-gray-500">
-                <Link to="/partners" className="hover:text-blue-500 flex items-center gap-1 transition-colors">
+                <Link to="/partners" className="hover:text-emerald-500 flex items-center gap-1 transition-colors">
                     <ChevronLeft className="w-4 h-4" /> All Partners
                 </Link>
                 <span>/</span>
@@ -30,11 +30,11 @@ const PartnerDetail: React.FC = () => {
                     src={partner.image} 
                     className="w-32 h-32 rounded-full object-cover border-4 border-black" 
                     alt={partner.name}
-                    onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/128x128/10b981/FFFFFF?text=${partner.name.substring(0, 5)}`; }}
+                    onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/128x128/3b82f6/FFFFFF?text=${partner.name.substring(0, 5)}`; }}
                 />
                 <div>
                     <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{partner.name}</h1>
-                    <span className="inline-block bg-green-900/30 text-green-500 text-xs font-bold px-3 py-1 rounded-full mb-4">{partner.type}</span>
+                    <span className="inline-block bg-blue-900/30 text-blue-500 text-xs font-bold px-3 py-1 rounded-full mb-4">{partner.type}</span>
                     <p className={`text-lg leading-relaxed mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                         {partner.fullText || partner.description}
                     </p>

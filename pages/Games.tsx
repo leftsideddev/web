@@ -2,45 +2,58 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useTheme } from '../App';
-import { db } from '../constants';
+import { useTheme, useDatabase } from '../App';
+import { GameStatus } from '../types';
+
+const StatusBadge: React.FC<{ status: GameStatus }> = ({ status }) => {
+    const colors: Record<GameStatus, string> = {
+        'In Development': 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+        'Released': 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+        'Paused': 'bg-amber-500/10 border-amber-500/30 text-amber-400',
+        'Alpha': 'bg-purple-500/10 border-purple-500/30 text-purple-400',
+        'Beta': 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
+        'Canceled': 'bg-red-500/10 border-red-500/30 text-red-400'
+    };
+
+    return (
+        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border backdrop-blur-md ${colors[status] || 'bg-gray-500/10 border-gray-500/30 text-gray-400'}`}>
+            {status}
+        </div>
+    );
+};
 
 const Games: React.FC = () => {
     const { isDarkMode } = useTheme();
+    const { data } = useDatabase();
     const navigate = useNavigate();
 
     return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="mb-12 flex items-center gap-4">
-                <button 
-                    onClick={() => navigate('/')} 
-                    className={`p-2 rounded-full ${isDarkMode ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-gray-100 hover:bg-gray-200 text-black'}`}
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </button>
-                <h1 className={`text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Our Games</h1>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pb-20">
+            <div className="mb-12">
+                <div className="flex items-center gap-4 mb-4">
+                    <button onClick={() => navigate('/')} className={`p-2 rounded-full transition-all ${isDarkMode ? 'bg-white/5 hover:bg-white/10' : 'bg-gray-100 hover:bg-gray-200'}`}><ArrowLeft className="w-5 h-5" /></button>
+                    <h1 className="text-5xl font-black tracking-tighter">Main Projects</h1>
+                </div>
+                <p className="text-gray-500 max-w-xl text-lg">Flagship releases and primary development efforts by the Left-Sided core team.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {db.games.map((game) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {data.games.map((game) => (
                     <motion.div 
-                        key={game.id}
+                        key={game.id} 
+                        whileHover={{ y: -12, scale: 1.04, boxShadow: isDarkMode ? "0 30px 60px -12px rgba(16, 185, 129, 0.3)" : "0 30px 60px -12px rgba(0, 0, 0, 0.12)" }}
                         onClick={() => navigate(`/games/${game.id}`)}
-                        whileHover={{ scale: 1.02 }}
-                        className="cursor-pointer relative aspect-[4/3] overflow-hidden rounded-xl bg-neutral-900 border border-white/10 group shadow-lg"
+                        className={`cursor-pointer group relative overflow-hidden rounded-3xl border transition-colors duration-300 ${isDarkMode ? 'bg-neutral-900 border-white/5 hover:border-emerald-500/40' : 'bg-white border-gray-200 shadow-sm hover:border-emerald-500'}`}
                     >
-                        <img 
-                            src={game.image} 
-                            className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-40 transition-opacity duration-500" 
-                            alt={game.title}
-                            onError={(e) => { (e.target as HTMLImageElement).src = `https://placehold.co/800x600/1e293b/FFFFFF?text=${game.title.replace(/\s/g, '+')}`; }}
-                        />
-                        <div className="absolute inset-0 p-8 flex flex-col justify-end bg-gradient-to-t from-black/95 via-black/50 to-transparent">
-                            <h3 className="text-3xl font-bold text-white mb-2">{game.title}</h3>
-                            <p className="text-gray-300 line-clamp-2">{game.description}</p>
-                            <div className="mt-4 text-sm font-mono text-blue-400 flex items-center gap-2 font-bold">
-                                DETAILS <ArrowRight className="w-4 h-4" />
-                            </div>
+                        <div className="aspect-[16/9] overflow-hidden relative">
+                            <img src={game.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={game.title} />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                            <div className="absolute top-4 right-4"><StatusBadge status={game.status} /></div>
+                        </div>
+                        <div className="p-8">
+                            <h3 className="text-2xl font-bold mb-2 transition-colors group-hover:text-emerald-400">{game.title}</h3>
+                            <p className="text-gray-500 text-sm line-clamp-2 mb-6 leading-relaxed font-medium">{game.description}</p>
+                            <div className="flex items-center gap-2 text-xs font-bold text-emerald-500 uppercase tracking-widest">View Details <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></div>
                         </div>
                     </motion.div>
                 ))}
