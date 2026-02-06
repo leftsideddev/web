@@ -1,3 +1,4 @@
+
 export type GameStatus = 'In Development' | 'Released' | 'Paused' | 'Alpha' | 'Beta' | 'Canceled';
 
 export interface Milestone {
@@ -19,8 +20,10 @@ export interface Game {
     status: GameStatus;
     genres: string[];
     platforms: string[];
+    developer: string; // Used for filtering (e.g., 'LSS', 'ande', 'gotchya')
     isFeatured?: boolean;
     roadmap?: Milestone[];
+    isPublic?: boolean;
 }
 
 export interface Series {
@@ -31,8 +34,10 @@ export interface Series {
     image: string;
     releaseDate: string;
     status: string;
+    developer: string; // Used for filtering (e.g., 'skullix')
     link?: string;
     roadmap?: Milestone[];
+    isPublic?: boolean;
 }
 
 export type SubsidiaryType = 'Founder Imprint' | 'Official Subsidiary' | 'Production Unit';
@@ -48,6 +53,7 @@ export interface Subsidiary {
     image: string;
     games: Game[];
     series?: Series[];
+    isPublic?: boolean;
 }
 
 export interface Partner {
@@ -59,6 +65,7 @@ export interface Partner {
     image: string;
     website?: string;
     tags: string[];
+    isPublic?: boolean;
 }
 
 export interface TimelineEvent {
@@ -113,6 +120,7 @@ export interface NewsItem {
     content: string;
     link?: string;
     postId?: string;
+    isPublic?: boolean;
 }
 
 export interface BlogPost {
@@ -125,6 +133,7 @@ export interface BlogPost {
     gallery?: string[];
     relatedGameIds?: string[];
     tags?: string[];
+    isPublic?: boolean;
 }
 
 export interface DB {

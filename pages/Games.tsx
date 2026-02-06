@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -29,16 +30,13 @@ const Games: React.FC = () => {
     const navigate = useNavigate();
 
     const mainProjects = useMemo(() => {
-        // Exclusively show Cardamania, Bumbl, and COD:B as main studio projects.
-        // Founder projects (from subsidiaries) are removed from this flagship view.
-        const allowedIds = ['game_cardamania', 'game_bumbl', 'game_cod_battlegrounds'];
-        
+        // Exclusively show projects tagged with 'LSS' as main studio projects.
         return data.games
-            .filter(g => allowedIds.includes(g.id))
+            .filter(g => g.developer === 'LSS')
             .sort((a, b) => {
                 // Ensure Cardamania stays at the very start
-                if (a.id === 'game_cardamania') return -1;
-                if (b.id === 'game_cardamania') return 1;
+                if (a.id === 'cardamania') return -1;
+                if (b.id === 'cardamania') return 1;
                 return a.title.localeCompare(b.title);
             });
     }, [data]);

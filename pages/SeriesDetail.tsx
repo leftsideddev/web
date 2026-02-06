@@ -2,24 +2,24 @@ import React, { useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, ArrowRight, Map, CheckCircle, Circle, Layers, Calendar, MapPin, Info, PlayCircle } from 'lucide-react';
-import { useTheme } from '../App';
-import { db } from '../constants';
+import { useTheme, useDatabase } from '../App';
 
 const SeriesDetail: React.FC = () => {
     const { id } = useParams();
     const { isDarkMode } = useTheme();
+    const { allData } = useDatabase();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [id]);
 
     const series = useMemo(() => {
-        for (const sub of db.subsidiaries) {
+        for (const sub of allData.subsidiaries) {
             const found = sub.series?.find(s => s.id === id);
             if (found) return found;
         }
         return null;
-    }, [id]);
+    }, [id, allData]);
 
     if (!series) return <div className="text-center py-20">Series Not Found</div>;
 
@@ -37,6 +37,7 @@ const SeriesDetail: React.FC = () => {
                     <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black group">
                         <img 
                             src={series.image} 
+                            style={{ imageRendering: series.id === 'rise' ? 'pixelated' : 'auto' }}
                             className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" 
                             alt={series.title}
                         />
@@ -68,7 +69,7 @@ const SeriesDetail: React.FC = () => {
                                     <Calendar className="w-4 h-4 text-gray-500" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] text-gray-500 uppercase font-black">Announced</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-black">Release Date</p>
                                     <p className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{series.releaseDate}</p>
                                 </div>
                             </div>

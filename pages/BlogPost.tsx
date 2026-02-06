@@ -7,8 +7,7 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { useTheme } from '../App';
-import { db } from '../constants';
+import { useTheme, useDatabase } from '../App';
 
 const ShareModal: React.FC<{ 
     isOpen: boolean; 
@@ -145,11 +144,59 @@ const ShareModal: React.FC<{
 const BlogPost: React.FC = () => {
     const { id } = useParams();
     const { isDarkMode } = useTheme();
+    const { allData } = useDatabase();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [isReaderMode, setIsReaderMode] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-    const post = useMemo(() => db.blogPosts.find(b => b.id === id), [id]);
+    const post = useMemo(() => allData.blogPosts.find(b => b.id === id), [id, allData]);
+
+    // Metadata & Social Embed Management
+    useEffect(() => {
+        if (!post) return;
+
+        // Save original defaults
+        const originalTitle = document.title;
+        const defaultImage = "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/leftsided1920.png";
+        
+        // Update Title
+        document.title = `${post.title} | Left-Sided Studios`;
+
+        // Update Meta Tags Helper
+        const updateMeta = (name: string, content: string, attr: 'name' | 'property' = 'name') => {
+            let tag = document.querySelector(`meta[${attr}="${name}"]`);
+            if (!tag) {
+                tag = document.createElement('meta');
+                tag.setAttribute(attr, name);
+                document.head.appendChild(tag);
+            }
+            tag.setAttribute('content', content);
+        };
+
+        // Apply Dynamic Metadata
+        const metaTitle = post.title;
+        const metaDesc = post.excerpt;
+        const metaImg = post.image || defaultImage;
+
+        updateMeta('og:title', metaTitle, 'property');
+        updateMeta('og:description', metaDesc, 'property');
+        updateMeta('og:image', metaImg, 'property');
+        updateMeta('twitter:title', metaTitle, 'name');
+        updateMeta('twitter:description', metaDesc, 'name');
+        updateMeta('twitter:image', metaImg, 'name');
+        updateMeta('twitter:card', 'summary_large_image', 'name');
+
+        // Restore defaults on unmount
+        return () => {
+            document.title = originalTitle;
+            updateMeta('og:title', 'Left Sided Studios', 'property');
+            updateMeta('og:description', 'Left-Sided Studios Hub for everything by us!', 'property');
+            updateMeta('og:image', defaultImage, 'property');
+            updateMeta('twitter:title', 'Left Sided Studios', 'name');
+            updateMeta('twitter:description', 'Left-Sided Studios Hub for everything by us!', 'name');
+            updateMeta('twitter:image', defaultImage, 'name');
+        };
+    }, [post]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -161,7 +208,7 @@ const BlogPost: React.FC = () => {
         return Math.ceil(words / 200);
     }, [post]);
 
-    if (!post) return <div className="text-center py-20 font-black tracking-widest uppercase opacity-40">Article Interrupted</div>;
+    if (!post) return <div className="text-center py-20 font-black uppercase tracking-widest opacity-40">Article Interrupted</div>;
 
     const postUrl = window.location.href;
     const isRiseRelated = post.relatedGameIds?.includes('game_rise');
@@ -205,7 +252,7 @@ const BlogPost: React.FC = () => {
         <motion.div 
             initial={{ opacity: 0.8 }} 
             animate={{ opacity: 1 }} 
-            key={id} // Key here ensures it doesn't flicker when shifting within the same component
+            key={id} 
             className={`max-w-4xl mx-auto transition-colors duration-500 ${isReaderMode ? 'bg-neutral-900 fixed inset-0 z-[200] overflow-y-auto px-6 pt-12' : ''}`}
         >
             <ShareModal 
@@ -321,12 +368,12 @@ const BlogPost: React.FC = () => {
                         <h3 className={`text-xs font-black uppercase tracking-[0.3em] text-emerald-500 mb-6`}>Mentioned Projects</h3>
                         <div className="flex flex-wrap gap-3">
                             {post.relatedGameIds.map(gameId => {
-                                const game = db.games.find(g => g.id === gameId) || 
-                                             db.subsidiaries.flatMap(s => s.games).find(g => g.id === gameId) ||
-                                             db.subsidiaries.flatMap(s => s.series || []).find(s => s.id === gameId);
+                                const game = allData.games.find(g => g.id === gameId) || 
+                                             allData.subsidiaries.flatMap(s => s.games).find(g => g.id === gameId) ||
+                                             allData.subsidiaries.flatMap(s => s.series || []).find(s => s.id === gameId);
                                 
                                 if (!game) return null;
-                                const isSeries = db.subsidiaries.some(sub => sub.series?.some(s => s.id === gameId));
+                                const isSeries = allData.subsidiaries.some(sub => sub.series?.some(s => s.id === gameId));
                                 const path = isSeries ? `/series/${gameId}` : `/games/${gameId}`;
 
                                 return (

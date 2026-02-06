@@ -4,8 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, ArrowRight, Newspaper, Map, CheckCircle, Circle, Layers, Monitor, Calendar, MapPin, Info, Maximize2, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { useTheme } from '../App';
-import { db } from '../constants';
+import { useTheme, useDatabase } from '../App';
 import { GameStatus } from '../types';
 
 const StatusBadge: React.FC<{ status: GameStatus }> = ({ status }) => {
@@ -28,25 +27,26 @@ const StatusBadge: React.FC<{ status: GameStatus }> = ({ status }) => {
 const GameDetail: React.FC = () => {
     const { id } = useParams();
     const { isDarkMode } = useTheme();
+    const { allData } = useDatabase();
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [id]);
 
-    const parentSubsidiary = useMemo(() => db.subsidiaries.find(sub => sub.games.some(g => g.id === id)), [id]);
+    const parentSubsidiary = useMemo(() => allData.subsidiaries.find(sub => sub.games.some(g => g.id === id)), [id, allData]);
     const game = useMemo(() => {
-        let found = db.games.find(g => g.id === id);
+        let found = allData.games.find(g => g.id === id);
         if (!found && parentSubsidiary) found = parentSubsidiary.games.find(g => g.id === id);
         return found;
-    }, [id, parentSubsidiary]);
+    }, [id, parentSubsidiary, allData]);
 
-    const relatedArticles = useMemo(() => game ? db.blogPosts.filter(post => post.relatedGameIds?.includes(game!.id)) : [], [game]);
+    const relatedArticles = useMemo(() => game ? allData.blogPosts.filter(post => post.relatedGameIds?.includes(game!.id)) : [], [game, allData]);
 
     if (!game) return <div className="text-center py-20 font-black uppercase tracking-widest opacity-40">Project Log Missing</div>;
 
     const isLinkActive = !!game.link;
-    const isMainProject = db.games.some(g => g.id === id);
+    const isMainProject = allData.games.some(g => g.id === id);
     const backPath = isMainProject ? '/games' : (parentSubsidiary ? `/network/${parentSubsidiary.id}` : '/network');
     const backLabel = isMainProject ? 'Back to Catalog' : (parentSubsidiary ? `Back to ${parentSubsidiary.name}` : 'Back to Network');
 
@@ -116,7 +116,7 @@ const GameDetail: React.FC = () => {
                     <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-black">
                         <img 
                             src={game.image} 
-                            style={{ imageRendering: game.id === 'game_rise' ? 'pixelated' : 'auto' }}
+                            style={{ imageRendering: game.id === 'rise' ? 'pixelated' : 'auto' }}
                             className="w-full h-full object-cover opacity-80" 
                             alt={game.title}
                         />
@@ -178,7 +178,7 @@ const GameDetail: React.FC = () => {
                         {relatedArticles.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {relatedArticles.map((post) => (
-                                    <Link key={post.id} to={`/blog/${post.id}`} className={`p-6 rounded-3xl border transition-all group ${isDarkMode ? 'bg-neutral-900 border-white/5 hover:bg-neutral-800' : 'bg-white border-gray-100 shadow-sm hover:shadow-md'}`}>
+                                    <Link key={post.id} to={`/news/${post.id}`} className={`p-6 rounded-3xl border transition-all group ${isDarkMode ? 'bg-neutral-900 border-white/5 hover:bg-neutral-800' : 'bg-white border-gray-100 shadow-sm hover:shadow-md'}`}>
                                         <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{post.date}</span>
                                         <h4 className="text-lg font-bold mt-2 group-hover:text-emerald-500 transition-colors">{post.title}</h4>
                                         <p className="text-sm text-gray-500 mt-2 line-clamp-2">{post.excerpt}</p>
@@ -199,8 +199,8 @@ const GameDetail: React.FC = () => {
                         <div className="space-y-6">
                             {[
                                 { icon: Monitor, label: 'Platform', value: game.platforms.join(', ') },
-                                { icon: Calendar, label: 'Announced', value: game.releaseDate },
-                                { icon: MapPin, label: 'Platform', value: game.id === 'game_cardamania' ? 'Steam' : (game.link?.includes('gamejolt.com') ? 'GameJolt' : 'Official Site') }
+                                { icon: Calendar, label: 'Release Date', value: game.releaseDate },
+                                { icon: MapPin, label: 'Store', value: game.id === 'cardamania' ? 'Steam' : (game.link?.includes('gamejolt.com') ? 'GameJolt' : 'Official Site') }
                             ].map((spec, i) => (
                                 <div key={i} className="flex items-center gap-4">
                                     <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-white/5' : 'bg-gray-100'}`}>

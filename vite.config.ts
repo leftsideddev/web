@@ -10,12 +10,22 @@ export default defineConfig({
       'react-dom',
       'react-router-dom',
       'framer-motion',
-      'lucide-react'
+      'lucide-react',
+      'react-markdown',
+      'remark-gfm'
     ],
   },
   build: {
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    rollupOptions: {
+      // Ensure these packages are treated as part of the bundle
+      external: [],
+    },
+  },
+  // Ensure ESM-only modules are handled correctly during the bundling phase
+  ssr: {
+    noExternal: ['react-markdown', 'remark-gfm'],
   },
 });

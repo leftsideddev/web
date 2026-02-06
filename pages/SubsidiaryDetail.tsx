@@ -1,10 +1,12 @@
-import React from 'react';
+
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, ArrowRight, PlayCircle } from 'lucide-react';
+import { ChevronLeft, ArrowRight } from 'lucide-react';
 import { useTheme, useDatabase } from '../App';
 import Card from '../components/Card';
-import { GameStatus } from '../types';
+// Fix: Import Game and Series types for explicit typing
+import { GameStatus, Game, Series } from '../types';
 
 const StatusBadge: React.FC<{ status: GameStatus | string }> = ({ status }) => {
     const colors: Record<string, string> = {
@@ -26,14 +28,29 @@ const StatusBadge: React.FC<{ status: GameStatus | string }> = ({ status }) => {
 const SubsidiaryDetail: React.FC = () => {
     const { id } = useParams();
     const { isDarkMode } = useTheme();
-    const { data } = useDatabase();
+    const { allData, data } = useDatabase();
     const navigate = useNavigate();
 
-    const sub = data.subsidiaries.find(s => s.id === id);
+    const sub = allData.subsidiaries.find(s => s.id === id);
 
     if (!sub) {
         return <div className="text-center py-20 font-black uppercase tracking-widest opacity-40">Subsidiary Data Missing</div>;
     }
+
+    // Filter projects from the global pool based on the developer tag matching the subsidiary ID
+    const visibleGames = useMemo(() => {
+        const allPossibleGames = [...data.games, ...data.subsidiaries.flatMap(s => s.games)];
+        // Fix: Explicitly type uniqueGames to avoid 'unknown' inference for the 'developer' property
+        const uniqueGames: Game[] = Array.from(new Map(allPossibleGames.map(g => [g.id, g])).values());
+        return uniqueGames.filter(g => g.developer === id);
+    }, [data, id]);
+
+    const visibleSeries = useMemo(() => {
+        const allPossibleSeries = data.subsidiaries.flatMap(s => s.series || []);
+        // Fix: Explicitly type uniqueSeries to avoid 'unknown' inference for the 'developer' property
+        const uniqueSeries: Series[] = Array.from(new Map(allPossibleSeries.map(s => [s.id, s])).values());
+        return uniqueSeries.filter(s => s.developer === id);
+    }, [data, id]);
 
     const isFounder = sub.type === 'Founder Imprint';
     const accentColor = isFounder ? 'emerald' : 'purple';
@@ -73,7 +90,7 @@ const SubsidiaryDetail: React.FC = () => {
             </div>
 
             {/* Games Section */}
-            {(sub.games && sub.games.length > 0) && (
+            {(visibleGames.length > 0) && (
                 <section className="mb-24">
                     <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
                         <h2 className={`text-2xl font-black uppercase tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -81,7 +98,7 @@ const SubsidiaryDetail: React.FC = () => {
                         </h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {sub.games.map(game => (
+                        {visibleGames.map(game => (
                             <Card 
                                 key={game.id}
                                 onClick={() => navigate(`/games/${game.id}`)}
@@ -90,7 +107,7 @@ const SubsidiaryDetail: React.FC = () => {
                                 description={game.description}
                                 accentColor={accentColor}
                                 imageClassName="aspect-[16/9]"
-                                scalingMode={game.id === 'game_rise' ? 'pixelated' : 'auto'}
+                                scalingMode={game.id === 'rise' ? 'pixelated' : 'auto'}
                                 subtitle={
                                     <div className="flex flex-wrap items-center gap-2">
                                         {(game.genres as string[]).map((genre, idx) => (
@@ -116,7 +133,7 @@ const SubsidiaryDetail: React.FC = () => {
             )}
 
             {/* Series Section */}
-            {(sub.series && sub.series.length > 0) && (
+            {(visibleSeries.length > 0) && (
                 <section className="mb-24">
                     <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
                         <h2 className={`text-2xl font-black uppercase tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -124,7 +141,7 @@ const SubsidiaryDetail: React.FC = () => {
                         </h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {sub.series.map(series => (
+                        {visibleSeries.map(series => (
                             <Card 
                                 key={series.id}
                                 onClick={() => navigate(`/series/${series.id}`)}
@@ -152,7 +169,7 @@ const SubsidiaryDetail: React.FC = () => {
                 </section>
             )}
 
-            {(!sub.games.length && (!sub.series || !sub.series.length)) && (
+            {(!visibleGames.length && !visibleSeries.length) && (
                 <div className="py-24 text-center border-2 border-dashed border-white/5 rounded-[3rem] opacity-40">
                     <p className="text-gray-500 font-mono text-sm uppercase tracking-widest">No public projects currently logged for this division.</p>
                 </div>

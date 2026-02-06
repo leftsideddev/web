@@ -1,18 +1,17 @@
-
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Globe, ChevronRight, PlayCircle } from 'lucide-react';
-import { useTheme } from '../App';
-import { db } from '../constants';
+import { useTheme, useDatabase } from '../App';
 import Card from '../components/Card';
 
 const PartnerDetail: React.FC = () => {
     const { id } = useParams();
     const { isDarkMode } = useTheme();
+    const { allData } = useDatabase();
     const navigate = useNavigate();
 
-    const partner = db.partners.find(p => p.id === id);
+    const partner = allData.partners.find(p => p.id === id);
 
     // Projects are now managed externally by partners on their own sites.
     const partnerGames: any[] = [];

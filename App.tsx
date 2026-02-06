@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect, createContext, useContext, useRef, useMemo } from 'react';
-import { MemoryRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
     Menu, Sun, Moon, ArrowLeft,
-    Users, Mail, Monitor, MessageSquare, Search, X, ChevronRight, Info, Layout, Newspaper, Zap, Filter, Check, RotateCcw, ChevronDown, Tag, Activity, Globe, Compass, Cloud, CloudOff
+    Users, Mail, Monitor, MessageSquare, Search, X, ChevronRight, Info, Layout, Newspaper, Zap, Filter, Check, RotateCcw, ChevronDown, Tag, Activity, Globe, Compass, Cloud, CloudOff, Contrast
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -24,26 +25,12 @@ import BlogPostPage from './pages/BlogPost';
 import About from './pages/About';
 import Admin from './pages/Admin';
 import Privacy from './pages/Privacy';
-
-// Generic Brand Icon Component for CDN logos
-const BrandIcon = ({ slug, hoverColor, className }: { slug: string, hoverColor: string, className?: string }) => (
-  <div className={`relative group/icon ${className}`}>
-    <img 
-      src={`https://cdn.simpleicons.org/${slug}/white`} 
-      className="w-full h-full object-contain transition-opacity group-hover/icon:opacity-0" 
-      alt={slug} 
-    />
-    <img 
-      src={`https://cdn.simpleicons.org/${slug}/${hoverColor}`} 
-      className="w-full h-full object-contain absolute inset-0 opacity-0 transition-opacity group-hover/icon:opacity-100" 
-      alt={`${slug} Hover`} 
-    />
-  </div>
-);
+import NotFound from './pages/NotFound';
 
 // --- DATABASE CONTEXT ---
 interface DatabaseContextType {
-    data: DB;
+    data: DB; // Filtered for listings/search
+    allData: DB; // Unfiltered for direct links
     isSynced: boolean;
     updateGames: (games: Game[]) => void;
     updateBlog: (posts: BlogPost[]) => void;
@@ -67,7 +54,6 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
     });
 
     const [isSynced, setIsSynced] = useState(false);
-
     const [adminUser, setAdminUser] = useState<{ email: string } | null>(() => {
         const saved = localStorage.getItem('lss_admin');
         if (saved) {
@@ -77,31 +63,35 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
         return null;
     });
 
-    // Helper to check if a date string is in the past or present
-    const isPublic = (dateStr: string) => {
-        if (!dateStr || dateStr === 'TBA' || dateStr.includes('Live')) return true;
-        const yearOnlyMatch = dateStr.match(/^\d{4}/);
-        if (yearOnlyMatch) {
-            return true; 
-        }
-        const date = new Date(dateStr);
-        if (isNaN(date.getTime())) return true;
-        return date.getTime() <= Date.now();
+    const isPublic = (item: { isPublic?: boolean }) => {
+        return item.isPublic !== false;
+    };
+
+    // Helper to sort by date (newest first)
+    const sortByDate = (a: { date: string }, b: { date: string }) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        
+        // If date parsing fails, fall back to 0
+        if (isNaN(dateA) || isNaN(dateB)) return 0;
+        
+        return dateB - dateA;
     };
 
     const data = useMemo(() => {
-        if (adminUser) return rawDb;
-        return {
+        const filtered = {
             ...rawDb,
-            games: rawDb.games.filter(g => g.id && isPublic(g.releaseDate)),
-            blogPosts: rawDb.blogPosts.filter(b => b.id && isPublic(b.date)),
-            news: rawDb.news.filter(n => n.id && isPublic(n.date)),
-            subsidiaries: rawDb.subsidiaries.map(s => ({
+            games: rawDb.games.filter(g => isPublic(g)),
+            blogPosts: rawDb.blogPosts.filter(b => isPublic(b)).sort(sortByDate),
+            news: rawDb.news.filter(n => isPublic(n)).sort(sortByDate),
+            partners: rawDb.partners.filter(p => isPublic(p)),
+            subsidiaries: rawDb.subsidiaries.filter(s => isPublic(s)).map(s => ({
                 ...s,
-                games: s.games.filter(g => g.id && isPublic(g.releaseDate)),
-                series: s.series?.filter(ser => ser.id && isPublic(ser.releaseDate))
+                games: s.games.filter(g => isPublic(g)),
+                series: s.series?.filter(ser => isPublic(ser))
             }))
         };
+        return filtered;
     }, [rawDb, adminUser]);
 
     useEffect(() => {
@@ -122,14 +112,34 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
 
     const syncWithCloud = async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/db`);
+            const response = await fetch(BACKEND_URL);
+            
+            // Check if the response is actually JSON. 
+            // In dev/preview environments, a missing function might redirect to index.html (HTML response).
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                console.log("Cloud sync skipped: Backend function not found (likely SPA redirect in preview).");
+                setIsSynced(false);
+                return;
+            }
+
+            const result = await response.json();
+
             if (response.ok) {
-                const cloudData = await response.json();
-                setRawDb(cloudData);
-                setIsSynced(true);
+                if (result && typeof result === 'object' && result.about) {
+                    setRawDb(result);
+                    setIsSynced(true);
+                    console.log("Database successfully synced from Cloud.");
+                } else {
+                    console.warn("Cloud data received but format is invalid.", result);
+                    setIsSynced(false);
+                }
+            } else {
+                console.error("Cloud Sync Rejected:", result.error || "Unknown error");
+                setIsSynced(false);
             }
         } catch (e) {
-            console.warn("Cloud sync failed, falling back to local.");
+            console.warn("Cloud sync network failure, using local state.");
             setIsSynced(false);
         }
     };
@@ -137,32 +147,17 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
     const updateGames = (games: Game[]) => {
         const newData = { ...rawDb, games };
         setRawDb(newData);
-        if (adminUser) persistToCloud(newData);
     };
 
     const updateBlog = (posts: BlogPost[]) => {
         const newData = { ...rawDb, blogPosts: posts };
         setRawDb(newData);
-        if (adminUser) persistToCloud(newData);
     };
 
-    const persistToCloud = async (newData: DB) => {
-        try {
-            await fetch(`${BACKEND_URL}/db`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Admin-Email': adminUser?.email || '' },
-                body: JSON.stringify(newData)
-            });
-            setIsSynced(true);
-        } catch (e) {
-            setIsSynced(false);
-        }
-    };
-    
     const logout = () => setAdminUser(null);
 
     return (
-        <DatabaseContext.Provider value={{ data, isSynced, updateGames, updateBlog, syncWithCloud, adminUser, logout }}>
+        <DatabaseContext.Provider value={{ data, allData: rawDb, isSynced, updateGames, updateBlog, syncWithCloud, adminUser, logout }}>
             {children}
         </DatabaseContext.Provider>
     );
@@ -170,10 +165,17 @@ const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children })
 
 interface ThemeContextType {
     isDarkMode: boolean;
+    isHighContrast: boolean;
     toggleTheme: () => void;
+    toggleHighContrast: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType>({ isDarkMode: true, toggleTheme: () => {} });
+const ThemeContext = createContext<ThemeContextType>({ 
+    isDarkMode: true, 
+    isHighContrast: false, 
+    toggleTheme: () => {}, 
+    toggleHighContrast: () => {} 
+});
 
 export const useTheme = () => useContext(ThemeContext);
 
@@ -183,15 +185,26 @@ const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         return saved ? saved === 'dark' : true;
     });
 
+    const [isHighContrast, setIsHighContrast] = useState(() => {
+        const saved = localStorage.getItem('high-contrast');
+        return saved === 'true';
+    });
+
     useEffect(() => {
         document.body.classList.toggle('light-mode', !isDarkMode);
         localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
     }, [isDarkMode]);
 
+    useEffect(() => {
+        document.body.classList.toggle('high-contrast', isHighContrast);
+        localStorage.setItem('high-contrast', String(isHighContrast));
+    }, [isHighContrast]);
+
     const toggleTheme = () => setIsDarkMode(prev => !prev);
+    const toggleHighContrast = () => setIsHighContrast(prev => !prev);
 
     return (
-        <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+        <ThemeContext.Provider value={{ isDarkMode, isHighContrast, toggleTheme, toggleHighContrast }}>
             {children}
         </ThemeContext.Provider>
     );
@@ -200,7 +213,6 @@ const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
   useEffect(() => {
-    // Only scroll to top if there is no anchor hash
     if (!hash) {
       window.scrollTo(0, 0);
     }
@@ -216,10 +228,8 @@ const AnchorScroll = () => {
             const id = hash.replace('#', '');
             const element = document.getElementById(id);
             if (element) {
-                // Short timeout to ensure page content is rendered before scrolling
-                // Added slightly longer delay and scroll margin handling
                 setTimeout(() => {
-                    const yOffset = -100; // Account for fixed header
+                    const yOffset = -100;
                     const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
                     window.scrollTo({ top: y, behavior: 'smooth' });
                 }, 200);
@@ -338,7 +348,7 @@ const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
                                         <h5 className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4 flex items-center gap-2"><Zap className="w-3 h-3" /> Genres</h5>
                                         <div className="flex flex-col gap-2 pb-8">
                                             {genres.map(g => (
-                                                <button key={g} onClick={() => setSelectedGenre(g)} className={`w-full text-left px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${selectedGenre === g ? 'bg-purple-500 border-purple-500 text-white' : isDarkMode ? 'bg-white/5 border-white/5 text-gray-400 hover:text-white hover:bg-white/10' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-100'}`}>{g}</button>
+                                                <button key={g} onClick={() => setSelectedGenre(g)} className={`w-full text-left px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${selectedGenre === g ? 'bg-purple-500 border-purple-500 text-white' : isDarkMode ? 'bg-white/5 border-white/5 text-gray-500 hover:text-white' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-100'}`}>{g}</button>
                                             ))}
                                         </div>
                                     </div>
@@ -381,7 +391,7 @@ const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
 };
 
 const Navbar: React.FC = () => {
-    const { isDarkMode, toggleTheme } = useTheme();
+    const { isDarkMode, isHighContrast, toggleTheme, toggleHighContrast } = useTheme();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
@@ -398,7 +408,6 @@ const Navbar: React.FC = () => {
 
     const isActive = (path: string) => path === '/' ? location.pathname === '/' : (location.pathname.startsWith(path) || (path === '/games' && location.pathname.startsWith('/series')));
     
-    // Dynamic color handling: Use red for PROJECTS link when on a series page
     const getActiveColorClass = (color: string, path: string) => {
         if (path === '/games' && location.pathname.startsWith('/series')) return 'text-red-500';
         return color === 'amber' ? 'text-amber-500' : (color === 'purple' ? 'text-purple-500' : (color === 'blue' ? 'text-blue-500' : 'text-emerald-500'));
@@ -425,9 +434,10 @@ const Navbar: React.FC = () => {
                             </Link>
                         ))}
                         <div className="h-4 w-px bg-white/10"></div>
-                        <div className="flex items-center gap-6">
-                            <button onClick={() => setIsSearchOpen(true)} className="text-emerald-500 hover:text-emerald-400 transition-colors"><Search className="w-5 h-5" /></button>
-                            <button onClick={toggleTheme} className="text-gray-400 hover:text-white transition-colors">{isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}</button>
+                        <div className="flex items-center gap-5">
+                            <button onClick={() => setIsSearchOpen(true)} className="text-emerald-500 hover:text-emerald-400 transition-colors" title="Search"><Search className="w-5 h-5" /></button>
+                            <button onClick={toggleHighContrast} className={`${isHighContrast ? 'text-emerald-500' : 'text-gray-400'} hover:text-white transition-colors`} title="Toggle High Contrast"><Contrast className="w-5 h-5" /></button>
+                            <button onClick={toggleTheme} className="text-gray-400 hover:text-white transition-colors" title="Toggle Dark/Light Mode">{isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}</button>
                         </div>
                     </div>
                     <div className="md:hidden flex items-center gap-4">
@@ -445,12 +455,12 @@ const Navbar: React.FC = () => {
                                 <div className="text-xs font-black uppercase tracking-widest text-emerald-500">Navigation Hub</div>
                                 <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-full bg-white/5 text-gray-500 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
                             </div>
-                            <div className="flex-grow p-8 flex flex-col gap-4">
+                            <div className="flex-grow p-8 flex flex-col gap-2">
                                 {navLinks.map((link) => (
                                     <button 
                                         key={link.name} 
                                         onClick={() => { navigate(link.path); setIsMenuOpen(false); }} 
-                                        className={`relative group flex items-center justify-between text-left py-4 px-6 rounded-2xl transition-all outline-none ${isActive(link.path) ? (isDarkMode ? 'bg-white/5' : 'bg-gray-50') : 'hover:bg-white/5'}`}
+                                        className={`relative group flex items-center justify-between text-left py-3 px-6 rounded-2xl transition-all outline-none ${isActive(link.path) ? (isDarkMode ? 'bg-white/5' : 'bg-gray-50') : 'hover:bg-white/5'}`}
                                     >
                                         <span className={`text-sm font-black tracking-[0.3em] transition-colors ${isActive(link.path) ? getActiveColorClass(link.color, link.path) : 'text-gray-500 group-hover:text-white'}`}>{link.name}</span>
                                         {isActive(link.path) && (
@@ -462,12 +472,18 @@ const Navbar: React.FC = () => {
                                     </button>
                                 ))}
                             </div>
-                            <div className="p-8 border-t border-white/5 flex flex-col gap-6">
+                            <div className="p-8 border-t border-white/5 flex flex-col gap-4">
+                                <button onClick={toggleHighContrast} className={`flex items-center justify-between w-full p-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${isHighContrast ? (isDarkMode ? 'bg-emerald-500/10 text-emerald-500' : 'bg-emerald-50 text-emerald-600') : (isDarkMode ? 'bg-white/5 text-gray-400' : 'bg-gray-100 text-gray-500')}`}>
+                                    <span className="flex items-center gap-3"><Contrast className="w-4 h-4" />High Contrast</span>
+                                    <div className={`w-8 h-4 rounded-full relative transition-colors ${isHighContrast ? 'bg-emerald-500' : 'bg-gray-600'}`}>
+                                        <div className={`absolute top-1 w-2 h-2 rounded-full bg-white transition-all ${isHighContrast ? 'left-5' : 'left-1'}`} />
+                                    </div>
+                                </button>
                                 <button onClick={() => { toggleTheme(); setIsMenuOpen(false); }} className={`flex items-center justify-between w-full p-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${isDarkMode ? 'bg-white/5 text-gray-400 hover:text-white' : 'bg-gray-100 text-gray-500 hover:text-black'}`}>
                                     <span className="flex items-center gap-3">{isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
                                     <ChevronRight className="w-3 h-3" />
                                 </button>
-                                <div className="text-[10px] font-black text-gray-700 uppercase tracking-widest text-center">LSS Hub v2.5</div>
+                                <div className="text-[10px] font-black text-gray-700 uppercase tracking-widest text-center mt-4">LSS Hub v2.6</div>
                             </div>
                         </motion.div>
                     </>
@@ -490,16 +506,16 @@ const Footer: React.FC = () => {
                     </p>
                     <div className="flex gap-4">
                         <a href="https://github.com/leftsideddev" target="_blank" className="p-2 rounded-xl bg-white/5 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-500 transition-all border border-white/5">
-                            <BrandIcon slug="github" hoverColor="emerald" className="w-5 h-5" />
+                            <img src="https://cdn.simpleicons.org/github/white" className="w-5 h-5" alt="GitHub" />
                         </a>
                         <a href="https://youtube.com/@LeftSidedStudios" target="_blank" className="p-2 rounded-xl bg-white/5 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-500 transition-all border border-white/5">
-                            <BrandIcon slug="youtube" hoverColor="FF0000" className="w-5 h-5" />
+                            <img src="https://cdn.simpleicons.org/youtube/white" className="w-5 h-5" alt="YouTube" />
                         </a>
                         <a href="https://twitter.com/@LeftSidedDev" target="_blank" className="p-2 rounded-xl bg-white/5 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-500 transition-all border border-white/5">
-                            <BrandIcon slug="x" hoverColor="white" className="w-5 h-5" />
+                            <img src="https://cdn.simpleicons.org/x/white" className="w-5 h-5" alt="X" />
                         </a>
                         <a href="https://discord.gg/A8XMvSnkCU" target="_blank" className="p-2 rounded-xl bg-white/5 hover:bg-emerald-500/10 text-gray-400 hover:text-emerald-500 transition-all border border-white/5">
-                            <BrandIcon slug="discord" hoverColor="5865F2" className="w-5 h-5" />
+                            <img src="https://cdn.simpleicons.org/discord/white" className="w-5 h-5" alt="Discord" />
                         </a>
                     </div>
                 </div>
@@ -508,9 +524,9 @@ const Footer: React.FC = () => {
                     <h4 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] mb-8">Projects</h4>
                     <ul className="space-y-4 text-xs font-black uppercase tracking-widest text-gray-500">
                         <li><Link to="/games#catalog" className="hover:text-emerald-500 transition-colors">Catalog</Link></li>
-                        <li><Link to="/games/game_cardamania" className="hover:text-emerald-500 transition-colors">Cardamania</Link></li>
-                        <li><Link to="/games/game_cod_battlegrounds" className="hover:text-emerald-500 transition-colors">COD:B</Link></li>
-                        <li><Link to="/games/game_bumbl" className="hover:text-emerald-500 transition-colors">Bumbl</Link></li>
+                        <li><Link to="/games/cardamania" className="hover:text-emerald-500 transition-colors">Cardamania</Link></li>
+                        <li><Link to="/games/breakpoint" className="hover:text-emerald-500 transition-colors">BREAKPOINT</Link></li>
+                        <li><Link to="/games/bumbl" className="hover:text-emerald-500 transition-colors">Bumbl</Link></li>
                     </ul>
                 </div>
 
@@ -519,8 +535,8 @@ const Footer: React.FC = () => {
                     <ul className="space-y-4 text-xs font-black uppercase tracking-widest text-gray-500">
                         <li><Link to="/network#official" className="hover:text-purple-500 transition-colors">Network Hub</Link></li>
                         <li><Link to="/network#partners" className="hover:text-purple-500 transition-colors">Partnerships</Link></li>
-                        <li><Link to="/network/sub_endgame" className="hover:text-purple-500 transition-colors">Endgame Studios</Link></li>
-                        <li><Link to="/network/sub_skullix" className="hover:text-purple-500 transition-colors">Skullix Media Group</Link></li>
+                        <li><Link to="/network/endgame" className="hover:text-purple-500 transition-colors">Endgame Studios</Link></li>
+                        <li><Link to="/network/skullix" className="hover:text-purple-500 transition-colors">Skullix Media Group</Link></li>
                     </ul>
                 </div>
 
@@ -567,6 +583,7 @@ const AnimatedRoutes: React.FC = () => {
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/privacy" element={<Privacy />} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </AnimatePresence>
     );
@@ -576,7 +593,7 @@ const App: React.FC = () => {
     return (
         <DatabaseProvider>
             <ThemeProvider>
-                <MemoryRouter>
+                <BrowserRouter>
                     <ScrollToTop />
                     <AnchorScroll />
                     <div className="min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
@@ -586,7 +603,7 @@ const App: React.FC = () => {
                         </main>
                         <Footer />
                     </div>
-                </MemoryRouter>
+                </BrowserRouter>
             </ThemeProvider>
         </DatabaseProvider>
     );

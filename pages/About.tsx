@@ -177,17 +177,17 @@ const About: React.FC = () => {
 
                         {/* Subsidiaries Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-                            <FamilyTreeNode name="ANdE Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/sub_ande')} />
-                            <FamilyTreeNode name="Gotch-ya Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/sub_gotchya')} />
-                            <FamilyTreeNode name="Bomb Banana" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/sub_bomb_banana')} />
-                            <FamilyTreeNode name="Endgame Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/sub_endgame')} />
+                            <FamilyTreeNode name="ANdE Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/ande')} />
+                            <FamilyTreeNode name="Gotch-ya Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/gotchya')} />
+                            <FamilyTreeNode name="Bomb Banana" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/bomb-banana')} />
+                            <FamilyTreeNode name="Endgame Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/endgame')} />
                         </div>
 
                         {/* Strategic Partners Row */}
                         <div className="w-full flex flex-col md:flex-row items-center justify-center mt-8 gap-8 md:gap-32">
                              <div className="flex flex-col items-center">
                                 <div className="mb-4 text-[10px] font-black uppercase tracking-widest text-blue-500 opacity-60">Strategic Alignment</div>
-                                <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" onClick={() => navigate('/partners/partner_citadel')} />
+                                <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" onClick={() => navigate('/partners/citadel')} />
                              </div>
                              
                              <div className="flex flex-col items-center relative">
@@ -196,7 +196,7 @@ const About: React.FC = () => {
                                     <Share2 className="w-4 h-4 text-orange-500" />
                                     <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Shared Production</span>
                                 </div>
-                                <FamilyTreeNode name="Skullix Media Group" type="Media & Production" color="text-orange-500" isJoint={true} onClick={() => navigate('/network/sub_skullix')} />
+                                <FamilyTreeNode name="Skullix Media Group" type="Media & Production" color="text-orange-500" isJoint={true} onClick={() => navigate('/network/skullix')} />
                              </div>
                         </div>
 

@@ -1,10 +1,19 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z3BTRL7T3K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Z3BTRL7T3K');
+    </script>
+
     <!-- Primary Meta Tags -->
     <title>Left Sided Studios</title>
     <meta name="description" content="Left Sided Studios - Left-Sided Studios Hub for everything by us!">
@@ -72,6 +81,62 @@
             );
         }
 
+        /* High Contrast Mode Overrides */
+        body.high-contrast {
+            background-image: none !important;
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
+
+        body.high-contrast::before {
+            display: none !important;
+        }
+
+        body.high-contrast.light-mode {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+        }
+
+        body.high-contrast * {
+            border-color: #ffffff !important;
+            box-shadow: none !important;
+        }
+        
+        body.high-contrast.light-mode * {
+            border-color: #000000 !important;
+        }
+
+        body.high-contrast .text-emerald-500,
+        body.high-contrast .text-emerald-400 {
+            color: #00ff00 !important;
+        }
+        
+        body.high-contrast .bg-emerald-500,
+        body.high-contrast .bg-emerald-600 {
+            background-color: #00ff00 !important;
+            color: #000000 !important;
+        }
+
+        body.high-contrast .text-amber-500,
+        body.high-contrast .text-amber-600 {
+            color: #ffff00 !important;
+        }
+
+        body.high-contrast .text-blue-500 {
+            color: #00ffff !important;
+        }
+
+        body.high-contrast .text-gray-500,
+        body.high-contrast .text-gray-400 {
+            color: #ffffff !important;
+            opacity: 1 !important;
+        }
+
+        body.high-contrast.light-mode .text-gray-500,
+        body.high-contrast.light-mode .text-gray-400 {
+            color: #000000 !important;
+        }
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
@@ -95,17 +160,18 @@
 <script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
-    "vite": "https://aistudiocdn.com/vite@^7.2.4",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
-    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "react-markdown": "https://esm.sh/react-markdown@^9.0.0",
-    "remark-gfm": "https://esm.sh/remark-gfm@^4.0.0"
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "framer-motion": "https://esm.sh/framer-motion@^12.29.2",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react-markdown": "https://esm.sh/react-markdown@^10.1.0",
+    "remark-gfm": "https://esm.sh/remark-gfm@^4.0.1",
+    "@netlify/functions": "https://esm.sh/@netlify/functions@^5.1.2",
+    "ioredis": "https://esm.sh/ioredis@^5.9.2"
   }
 }
 </script>
