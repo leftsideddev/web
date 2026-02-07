@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -40,15 +39,15 @@ const SubsidiaryDetail: React.FC = () => {
     // Filter projects from the global pool based on the developer tag matching the subsidiary ID
     const visibleGames = useMemo(() => {
         const allPossibleGames = [...data.games, ...data.subsidiaries.flatMap(s => s.games)];
-        // Fix: Explicitly type uniqueGames to avoid 'unknown' inference for the 'developer' property
-        const uniqueGames: Game[] = Array.from(new Map(allPossibleGames.map(g => [g.id, g])).values());
+        // Fix: Explicitly type uniqueGames and Map to avoid 'unknown' inference
+        const uniqueGames: Game[] = Array.from(new Map<string, Game>(allPossibleGames.map(g => [g.id, g])).values());
         return uniqueGames.filter(g => g.developer === id);
     }, [data, id]);
 
     const visibleSeries = useMemo(() => {
         const allPossibleSeries = data.subsidiaries.flatMap(s => s.series || []);
-        // Fix: Explicitly type uniqueSeries to avoid 'unknown' inference for the 'developer' property
-        const uniqueSeries: Series[] = Array.from(new Map(allPossibleSeries.map(s => [s.id, s])).values());
+        // Fix: Explicitly type uniqueSeries and Map to avoid 'unknown' inference
+        const uniqueSeries: Series[] = Array.from(new Map<string, Series>(allPossibleSeries.map(s => [s.id, s])).values());
         return uniqueSeries.filter(s => s.developer === id);
     }, [data, id]);
 
