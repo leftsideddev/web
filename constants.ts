@@ -51,7 +51,7 @@ export const db: DB = {
             ] 
         },
         { 
-            name: "DaiseealSansYT", 
+            name: "DaRealSansYT", 
             role: "Co-Founder", 
             bio: "", 
             image: "", 
