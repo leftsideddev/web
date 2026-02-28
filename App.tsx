@@ -50,7 +50,16 @@ export const useDatabase = () => {
 const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [rawDb, setRawDb] = useState<DB>(() => {
         const saved = localStorage.getItem('lss_database');
-        return saved ? JSON.parse(saved) : initialDb;
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // If the saved version is older than the hardcoded version, use the hardcoded one
+            if (!parsed.version || parsed.version < (initialDb.version || 0)) {
+                console.log("Database version mismatch. Resetting to initial database.");
+                return initialDb;
+            }
+            return parsed;
+        }
+        return initialDb;
     });
 
     const [isSynced, setIsSynced] = useState(false);

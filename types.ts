@@ -137,6 +137,7 @@ export interface BlogPost {
 }
 
 export interface DB {
+    version?: number;
     about: AboutData;
     siteMap: SiteMap;
     people: TeamMember[];

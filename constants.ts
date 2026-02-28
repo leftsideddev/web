@@ -11,6 +11,7 @@ export const ALLOWED_ADMINS = [
 ];
 
 export const db: DB = {
+    version: 2,
     about: {
         title: "Welcome to Left-Sided Studios",
         subtitle: "Explore our creations, updates, and more!",
@@ -50,7 +51,7 @@ export const db: DB = {
             ] 
         },
         { 
-            name: "DaRealSansYT", 
+            name: "DaiseealSansYT", 
             role: "Co-Founder", 
             bio: "", 
             image: "", 
@@ -259,7 +260,7 @@ export const db: DB = {
             image: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/ande_banner.png?raw=true",
             games: [
                 {
-                    id: "ande-fnaf",
+                    id: "ande-fsaf",
                     title: "Five Shifts at Fazbear's",
                     description: "Survival horror fan-game.",
                     fullText: "Work as a security guard at the local Pizza Parlor.",
@@ -313,7 +314,7 @@ export const db: DB = {
             image: "https://github.com/leftsideddev/web/blob/main/images/studios/bombbanana.png?raw=true",
             games: [
                 {
-                    id: "eyebo",
+                    id: "bb-eyebo",
                     title: "Eyebo",
                     description: "Hack-and-slash platformer.",
                     fullText: "Navigate a monster-filled world as a warrior eye.",
@@ -340,17 +341,17 @@ export const db: DB = {
             games: [],
             series: [
                 {
-                    id: "fnaf-otc",
+                    id: "fsaf-otc",
                     title: "Five Nights at Freddy's - On the Clock",
-                    description: "Founding of Fazbear Entertainment.",
-                    fullText: "A deep-dive cinematic series exploring the early days of Fazbear Entertainment.",
+                    description: "Maybe things should stay hidden forever.",
+                    fullText: "A deep-dive cinematic series tie-in for 'Five Shifts at Fazbears' by ANdE Studios",
                     image: "https://github.com/leftsideddev/web/blob/main/images/games/fsaf_otc.png?raw=true",
                     releaseDate: "2027",
                     status: "In Development",
                     developer: "skullix",
                     roadmap: [
-                        { label: "Scripting Phase", date: "2024", completed: true },
-                        { label: "Storyboarding", date: "2025", completed: false, description: "Mapping out the visual narrative for the pilot episode." },
+                        { label: "Scripting Phase", date: "2025", completed: true },
+                        { label: "Storyboarding", date: "2026", completed: false, description: "Mapping out the visual narrative for the pilot episode." },
                         { label: "Voice Acting & Animation", date: "2026", completed: false },
                         { label: "Full Premiere", date: "2027", completed: false }
                     ],

@@ -326,7 +326,7 @@
       "image": "https://github.com/leftsideddev/web/blob/main/images/studios/bombbanana.png?raw=true",
       "games": [
         {
-          "id": "eyebo",
+          "id": "bb-eyebo",
           "title": "Eyebo",
           "description": "Hack-and-slash platformer.",
           "fullText": "Navigate a monster-filled world as a warrior eye.",

@@ -216,7 +216,7 @@ const Admin: React.FC = () => {
                                 onClick={() => setEditingGame({
                                     id: `game_${Date.now()}`, title: '', description: '', fullText: '', 
                                     image: '', releaseDate: 'TBA', link: '', status: 'In Development', 
-                                    genres: [], platforms: ['PC']
+                                    genres: [], platforms: ['PC'], developer: 'LSS'
                                 })}
                                 className="bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-emerald-500/20 transition-all"
                             >

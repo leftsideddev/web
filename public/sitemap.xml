@@ -1,177 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
     <url>
         <loc>https://leftsidedstudios.netlify.app/</loc>
-        <lastmod>2026-02-20</lastmod>
+        <lastmod>2026-02-22</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://leftsidedstudios.netlify.app/about</loc>
-        <lastmod>2026-02-20</lastmod>
+        <lastmod>2026-02-22</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://leftsidedstudios.netlify.app/contact</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/privacy</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.3</priority>
-    </url>
-
-    <url>
         <loc>https://leftsidedstudios.netlify.app/games</loc>
-        <lastmod>2026-02-20</lastmod>
+        <lastmod>2026-02-22</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
         <loc>https://leftsidedstudios.netlify.app/games/cardamania</loc>
-        <lastmod>2025-11-15</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/games/rise</loc>
-        <lastmod>2026-02-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>https://leftsidedstudios.netlify.app/games/bumbl</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>https://leftsidedstudios.netlify.app/games/breakpoint</loc>
-        <lastmod>2026-01-30</lastmod>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/games/bb-eyebo</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/games/ande-fsaf</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/games/gotchya-shadow</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/series/fsaf-otc</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/network</loc>
+        <lastmod>2026-02-22</lastmod>
         <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/network/ande</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/network/gotchya</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/network/bomb-banana</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/network/skullix</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/network/endgame</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/partners</loc>
+        <lastmod>2026-02-22</lastmod>
         <priority>0.6</priority>
     </url>
-
+    <url>
+        <loc>https://leftsidedstudios.netlify.app/partners/citadel</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.6</priority>
+    </url>
     <url>
         <loc>https://leftsidedstudios.netlify.app/news</loc>
-        <lastmod>2026-02-20</lastmod>
+        <lastmod>2026-02-22</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>https://leftsidedstudios.netlify.app/news</loc>
-        <lastmod>2026-02-20</lastmod>
-        <changefreq>weekly</changefreq>
+        <loc>https://leftsidedstudios.netlify.app/news/godot-migration</loc>
+        <lastmod>2026-02-22</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://leftsidedstudios.netlify.app/news/godot-migration</loc>
-        <lastmod>2026-01-30</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.4</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/news/rise-announcement</loc>
-        <lastmod>2026-02-20</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.4</priority>
-    </url>
-    <url>
         <loc>https://leftsidedstudios.netlify.app/news/cardamania-update</loc>
-        <lastmod>2025-11-15</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.4</priority>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>https://leftsidedstudios.netlify.app/news/welcome</loc>
-        <lastmod>2025-11-10</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.4</priority>
-    </url>
-
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/network</loc>
-        <lastmod>2026-01-30</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://leftsidedstudios.netlify.app/subsidiaries</loc>
-        <lastmod>2026-01-30</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/subsidiaries/ande</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/subsidiaries/gotchya</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/subsidiaries/bomb-banana</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/subsidiaries/skullix</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/subsidiaries/endgame</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/games/ande-fnaf</loc>
-        <lastmod>2025-10-27</lastmod>
+        <loc>https://leftsidedstudios.netlify.app/contact</loc>
+        <lastmod>2026-02-22</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://leftsidedstudios.netlify.app/games/gotchya-shadow</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
+        <loc>https://leftsidedstudios.netlify.app/privacy</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.3</priority>
     </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/games/eyebo</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/series/fnaf-otc</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/partners</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>https://leftsidedstudios.netlify.app/partners/citadel</loc>
-        <lastmod>2025-10-27</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
 </urlset>
