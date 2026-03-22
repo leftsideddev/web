@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useTheme } from '../App';
+import { useTheme } from '../contexts';
 
 const CardSchemes = {
   emerald: {

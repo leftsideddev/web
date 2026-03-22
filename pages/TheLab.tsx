@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FlaskConical, Beaker, Terminal, Microscope, Zap, ArrowRight, Layers, Construction } from 'lucide-react';
-import { useTheme } from '../App';
+import { useTheme } from '../contexts';
 import Skeleton from '../components/Skeleton';
 
 const TheLab: React.FC = () => {

@@ -125,7 +125,7 @@ When we make changes, we will update the "Last Updated" date at the top of this 
 
 If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, you may contact us at:
 
-**Email:** leftsidedstudios@gmail.com
+**Email:** Contact via Discord or Social Media
 
 ---
 

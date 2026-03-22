@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Home } from 'lucide-react';
-import { useTheme } from '../App';
+import { useTheme } from '../contexts';
 
 const NotFound: React.FC = () => {
     const { isDarkMode } = useTheme();

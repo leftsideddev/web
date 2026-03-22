@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useDatabase, useTheme } from '../App';
+import { useDatabase, useTheme } from '../contexts';
 import { useNavigate } from 'react-router-dom';
 import { 
     LayoutDashboard, Gamepad2, Newspaper, TrendingUp, Users, MousePointer2, 
     Plus, Edit3, Trash2, CheckCircle, Save, X, ArrowLeft, BarChart3, Clock,
-    Monitor, Globe, ShieldAlert, Activity, Cpu, CloudLightning, Cloud, CloudOff, RefreshCw
+    Monitor, Globe, ShieldAlert, Activity, Cpu, CloudLightning, Cloud, CloudOff, RefreshCw, RotateCcw
 } from 'lucide-react';
 import { Game, BlogPost, GameStatus } from '../types';
-import { ALLOWED_ADMINS } from '../constants';
 
 const Admin: React.FC = () => {
-    const { data, isSynced, updateGames, updateBlog, syncWithCloud, adminUser, logout } = useDatabase();
+    const { data, allData, isSynced, updateGames, updateBlog, syncWithCloud, persistToCloud, adminUser, login, logout } = useDatabase();
     const { isDarkMode } = useTheme();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<'dash' | 'games' | 'blog'>('dash');
+    const [isSaving, setIsSaving] = useState(false);
+
+    // --- DEPRECATION FLAG ---
+    // Set this to false to re-enable the admin portal in the future
+    const isDeprecated = true;
 
     // State for forms
     const [editingGame, setEditingGame] = useState<Game | null>(null);
@@ -22,13 +26,43 @@ const Admin: React.FC = () => {
     const [isSyncing, setIsSyncing] = useState(false);
 
     useEffect(() => {
-        if (!adminUser || !ALLOWED_ADMINS.includes(adminUser.email)) {
-            navigate('/');
-        }
         window.scrollTo(0, 0);
-    }, [adminUser, navigate]);
+    }, []);
 
-    if (!adminUser || !ALLOWED_ADMINS.includes(adminUser.email)) return null;
+    if (isDeprecated) {
+        return (
+            <div className="flex flex-col items-center justify-center py-32 text-center">
+                <ShieldAlert className="w-16 h-16 text-amber-500 mb-6" />
+                <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">Terminal Offline</h2>
+                <p className="text-gray-500 max-w-md mb-8 font-medium">
+                    The Studio Backend is currently deprecated and undergoing maintenance. 
+                    Direct database access has been suspended to ensure system stability.
+                </p>
+                <button 
+                    onClick={() => navigate('/')}
+                    className="bg-emerald-500 hover:bg-emerald-400 text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 transition-all flex items-center gap-3"
+                >
+                    <ArrowLeft className="w-5 h-5" /> Return to Home
+                </button>
+            </div>
+        );
+    }
+
+    if (!adminUser) {
+        return (
+            <div className="flex flex-col items-center justify-center py-32 text-center">
+                <ShieldAlert className="w-16 h-16 text-amber-500 mb-6" />
+                <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">Restricted Access</h2>
+                <p className="text-gray-500 max-w-md mb-8 font-medium">This terminal is reserved for authorized studio personnel. Please authenticate to proceed.</p>
+                <button 
+                    onClick={login}
+                    className="bg-emerald-500 hover:bg-emerald-400 text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 transition-all flex items-center gap-3"
+                >
+                    <Globe className="w-5 h-5" /> Sign in with Google
+                </button>
+            </div>
+        );
+    }
 
     // --- MOCK ANALYTICS DATA ---
     const stats = [
@@ -45,7 +79,19 @@ const Admin: React.FC = () => {
         setTimeout(() => setIsSyncing(false), 1000);
     };
 
-    const saveGame = (game: Game) => {
+    const handleResetDatabase = async () => {
+        if (window.confirm("WARNING: This will reset your local and cloud database to the default studio template. All manual changes will be lost. Proceed?")) {
+            setIsSaving(true);
+            // We need a way to trigger a reset in the provider. 
+            // For now, we can just clear localStorage and reload, or use persistToCloud with initial data.
+            // But we don't have easy access to initialDb here.
+            // Let's just clear localStorage and reload for now, the provider will pick up initialDb on next load.
+            localStorage.removeItem('lss_database');
+            window.location.reload();
+        }
+    };
+
+    const saveGame = async (game: Game) => {
         const isNew = !data.games.find(g => g.id === game.id);
         let newGames;
         if (isNew) {
@@ -53,17 +99,29 @@ const Admin: React.FC = () => {
         } else {
             newGames = data.games.map(g => g.id === game.id ? game : g);
         }
+        
+        const newData = { ...data, games: newGames };
         updateGames(newGames);
         setEditingGame(null);
+        
+        setIsSaving(true);
+        await persistToCloud(newData);
+        setIsSaving(false);
     };
 
-    const deleteGame = (id: string) => {
+    const deleteGame = async (id: string) => {
         if (window.confirm("CRITICAL: Permanently delete this project from the studio directory?")) {
-            updateGames(data.games.filter(g => g.id !== id));
+            const newGames = data.games.filter(g => g.id !== id);
+            const newData = { ...data, games: newGames };
+            updateGames(newGames);
+            
+            setIsSaving(true);
+            await persistToCloud(newData);
+            setIsSaving(false);
         }
     };
 
-    const savePost = (post: BlogPost) => {
+    const savePost = async (post: BlogPost) => {
         const isNew = !data.blogPosts.find(b => b.id === post.id);
         let newPosts;
         if (isNew) {
@@ -71,8 +129,14 @@ const Admin: React.FC = () => {
         } else {
             newPosts = data.blogPosts.map(b => b.id === post.id ? post : b);
         }
+        
+        const newData = { ...data, blogPosts: newPosts };
         updateBlog(newPosts);
         setEditingPost(null);
+        
+        setIsSaving(true);
+        await persistToCloud(newData);
+        setIsSaving(false);
     };
 
     return (
@@ -130,15 +194,27 @@ const Admin: React.FC = () => {
                                     <p className="text-sm text-gray-500 font-medium">
                                         {isSynced ? 'Synchronized with leftsidedinsiders.netlify.app' : 'Using local data repository (Persistence active)'}
                                     </p>
+                                    <div className="mt-2 flex items-center gap-2">
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-600">Database Version:</span>
+                                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">{allData.version || '1.0'}</span>
+                                    </div>
                                 </div>
                             </div>
-                            <button 
-                                onClick={handleManualSync}
-                                disabled={isSyncing}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all bg-white/5 border border-white/5 hover:bg-white/10 ${isSyncing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                                <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} /> Force Sync
-                            </button>
+                            <div className="flex gap-3">
+                                <button 
+                                    onClick={handleResetDatabase}
+                                    className="flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all bg-red-500/10 border border-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
+                                >
+                                    <RotateCcw className="w-4 h-4" /> Reset to Template
+                                </button>
+                                <button 
+                                    onClick={handleManualSync}
+                                    disabled={isSyncing}
+                                    className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all bg-white/5 border border-white/5 hover:bg-white/10 ${isSyncing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                >
+                                    <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} /> Force Sync
+                                </button>
+                            </div>
                         </div>
 
                         {/* Stats Grid */}
@@ -186,10 +262,10 @@ const Admin: React.FC = () => {
                                 <h3 className="text-xs font-black uppercase tracking-[0.3em] text-gray-500 mb-10">Access Logs</h3>
                                 <div className="space-y-6">
                                     {[
-                                        { user: 'vermetra@gmail.com', time: '2m ago', action: 'Update: Cardamania' },
-                                        { user: 'rktspencer@gmail.com', time: '45m ago', action: 'New Article' },
-                                        { user: 'baddudepvp1126@gmail.com', time: '2h ago', action: 'Status Sync' },
-                                        { user: 'vermetra@gmail.com', time: '5h ago', action: 'Dash Access' }
+                                        { user: 'Authorized Personnel', time: '2m ago', action: 'Update: Cardamania' },
+                                        { user: 'Authorized Personnel', time: '45m ago', action: 'New Article' },
+                                        { user: 'Authorized Personnel', time: '2h ago', action: 'Status Sync' },
+                                        { user: 'Authorized Personnel', time: '5h ago', action: 'Dash Access' }
                                     ].map((log, i) => (
                                         <div key={i} className="flex flex-col gap-1 border-b border-white/5 pb-4 last:border-0">
                                             <div className="flex justify-between items-center">
@@ -340,6 +416,11 @@ const Admin: React.FC = () => {
                     </p>
                 </div>
                 <div className="flex gap-3">
+                    {isSaving && (
+                        <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-emerald-500 animate-pulse">
+                            <RefreshCw className="w-3 h-3 animate-spin" /> Saving to Cloud...
+                        </div>
+                    )}
                     <button onClick={() => navigate('/')} className="px-6 py-2 rounded-xl bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-widest hover:text-white transition-colors">Exit Portal</button>
                     <button onClick={logout} className="px-6 py-2 rounded-xl bg-red-500/10 border border-red-500/10 text-[9px] font-black uppercase tracking-widest text-red-500 hover:bg-red-500 hover:text-white transition-all">Sign Out</button>
                 </div>

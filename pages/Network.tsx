@@ -2,8 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, User, Shield, Zap, Users } from 'lucide-react';
-import { useTheme } from '../App';
-import { db } from '../constants';
+import { useTheme, useDatabase } from '../contexts';
 import Card from '../components/Card';
 import { Subsidiary, Partner, GameStatus } from '../types';
 
@@ -27,10 +26,11 @@ const StatusBadge: React.FC<{ status: GameStatus | string }> = ({ status }) => {
 
 const Network: React.FC = () => {
     const { isDarkMode } = useTheme();
+    const { data } = useDatabase();
     const navigate = useNavigate();
 
-    const imprints = db.subsidiaries.filter(s => s.type === 'Founder Imprint');
-    const officials = db.subsidiaries.filter(s => s.type === 'Official Subsidiary' || s.type === 'Production Unit');
+    const imprints = data.subsidiaries.filter(s => s.type === 'Founder Imprint');
+    const officials = data.subsidiaries.filter(s => s.type === 'Official Subsidiary' || s.type === 'Production Unit');
 
     const renderSubCard = (sub: Subsidiary) => {
         const isFounder = sub.type === 'Founder Imprint';
@@ -134,7 +134,7 @@ const Network: React.FC = () => {
                     <h2 className="text-2xl font-black uppercase tracking-tight">Strategic Partners</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {db.partners.map(renderPartnerCard)}
+                    {data.partners.map(renderPartnerCard)}
                 </div>
             </section>
 

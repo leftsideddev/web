@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 // Added 'Users' to imports
 import { Mail, MessageSquareText, ExternalLink, User, Users, Gamepad2, Zap, Youtube, CheckCircle, Twitter } from 'lucide-react';
-import { useTheme } from '../App';
-import { db } from '../constants';
+import { useTheme, useDatabase } from '../contexts';
 
 const Contact: React.FC = () => {
     const { isDarkMode } = useTheme();
+    const { data } = useDatabase();
     
     // Form state
     const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
@@ -76,7 +76,7 @@ const Contact: React.FC = () => {
                         <Users className="w-4 h-4" /> Connect with Founders
                     </h2>
                     <div className="flex flex-col gap-4 flex-grow">
-                        {db.people.map((person, idx) => (
+                        {data.people.map((person, idx) => (
                             <div key={idx} className={`p-6 rounded-[2rem] border flex items-center justify-between transition-all flex-1 ${isDarkMode ? 'bg-neutral-900/50 border-white/5 hover:border-blue-500/30' : 'bg-white border-gray-100 shadow-sm hover:border-blue-500'}`}>
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
@@ -142,7 +142,7 @@ const Contact: React.FC = () => {
                                     id="email" 
                                     value={formData.email}
                                     onChange={handleInputChange}
-                                    placeholder="jane@example.com" 
+                                    placeholder="user@example.com" 
                                     className={`w-full p-4 rounded-2xl border focus:ring-2 focus:ring-blue-500 outline-none transition-all ${isDarkMode ? 'bg-neutral-950 border-neutral-800 text-white placeholder-neutral-700' : 'bg-gray-50 border-gray-200 text-black placeholder-gray-400'}`}
                                 />
                             </div>

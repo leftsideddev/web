@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, ArrowRight } from 'lucide-react';
-import { useTheme, useDatabase } from '../App';
+import { useTheme, useDatabase } from '../contexts';
 import Card from '../components/Card';
 // Fix: Import Game and Series types for explicit typing
 import { GameStatus, Game, Series } from '../types';

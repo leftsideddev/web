@@ -7,8 +7,8 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { db as initialDb, BACKEND_URL, ALLOWED_ADMINS } from './constants';
-import { DB, Game, BlogPost } from './types';
+import { DatabaseProvider, ThemeProvider, useTheme, useDatabase } from './contexts';
+import { SafeMarkdown } from './components/SafeMarkdown';
 
 // Pages
 import Home from './pages/Home';
@@ -26,198 +26,9 @@ import About from './pages/About';
 import Admin from './pages/Admin';
 import Privacy from './pages/Privacy';
 import NotFound from './pages/NotFound';
+import Chatbot from './components/Chatbot';
 
-// --- DATABASE CONTEXT ---
-interface DatabaseContextType {
-    data: DB; // Filtered for listings/search
-    allData: DB; // Unfiltered for direct links
-    isSynced: boolean;
-    updateGames: (games: Game[]) => void;
-    updateBlog: (posts: BlogPost[]) => void;
-    syncWithCloud: () => Promise<void>;
-    adminUser: { email: string } | null;
-    logout: () => void;
-}
-
-const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
-
-export const useDatabase = () => {
-    const context = useContext(DatabaseContext);
-    if (!context) throw new Error("useDatabase must be used within a DatabaseProvider");
-    return context;
-};
-
-const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [rawDb, setRawDb] = useState<DB>(() => {
-        const saved = localStorage.getItem('lss_database');
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            // If the saved version is older than the hardcoded version, use the hardcoded one
-            if (!parsed.version || parsed.version < (initialDb.version || 0)) {
-                console.log("Database version mismatch. Resetting to initial database.");
-                return initialDb;
-            }
-            return parsed;
-        }
-        return initialDb;
-    });
-
-    const [isSynced, setIsSynced] = useState(false);
-    const [adminUser, setAdminUser] = useState<{ email: string } | null>(() => {
-        const saved = localStorage.getItem('lss_admin');
-        if (saved) {
-            const user = JSON.parse(saved);
-            return ALLOWED_ADMINS.includes(user.email) ? user : null;
-        }
-        return null;
-    });
-
-    const isPublic = (item: { isPublic?: boolean }) => {
-        return item.isPublic !== false;
-    };
-
-    // Helper to sort by date (newest first)
-    const sortByDate = (a: { date: string }, b: { date: string }) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        
-        // If date parsing fails, fall back to 0
-        if (isNaN(dateA) || isNaN(dateB)) return 0;
-        
-        return dateB - dateA;
-    };
-
-    const data = useMemo(() => {
-        const filtered = {
-            ...rawDb,
-            games: rawDb.games.filter(g => isPublic(g)),
-            blogPosts: rawDb.blogPosts.filter(b => isPublic(b)).sort(sortByDate),
-            news: rawDb.news.filter(n => isPublic(n)).sort(sortByDate),
-            partners: rawDb.partners.filter(p => isPublic(p)),
-            subsidiaries: rawDb.subsidiaries.filter(s => isPublic(s)).map(s => ({
-                ...s,
-                games: s.games.filter(g => isPublic(g)),
-                series: s.series?.filter(ser => isPublic(ser))
-            }))
-        };
-        return filtered;
-    }, [rawDb, adminUser]);
-
-    useEffect(() => {
-        localStorage.setItem('lss_database', JSON.stringify(rawDb));
-    }, [rawDb]);
-
-    useEffect(() => {
-        if (adminUser) {
-            localStorage.setItem('lss_admin', JSON.stringify(adminUser));
-        } else {
-            localStorage.removeItem('lss_admin');
-        }
-    }, [adminUser]);
-
-    useEffect(() => {
-        syncWithCloud();
-    }, []);
-
-    const syncWithCloud = async () => {
-        try {
-            const response = await fetch(BACKEND_URL);
-            
-            // Check if the response is actually JSON. 
-            // In dev/preview environments, a missing function might redirect to index.html (HTML response).
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                console.log("Cloud sync skipped: Backend function not found (likely SPA redirect in preview).");
-                setIsSynced(false);
-                return;
-            }
-
-            const result = await response.json();
-
-            if (response.ok) {
-                if (result && typeof result === 'object' && result.about) {
-                    setRawDb(result);
-                    setIsSynced(true);
-                    console.log("Database successfully synced from Cloud.");
-                } else {
-                    console.warn("Cloud data received but format is invalid.", result);
-                    setIsSynced(false);
-                }
-            } else {
-                console.error("Cloud Sync Rejected:", result.error || "Unknown error");
-                setIsSynced(false);
-            }
-        } catch (e) {
-            console.warn("Cloud sync network failure, using local state.");
-            setIsSynced(false);
-        }
-    };
-
-    const updateGames = (games: Game[]) => {
-        const newData = { ...rawDb, games };
-        setRawDb(newData);
-    };
-
-    const updateBlog = (posts: BlogPost[]) => {
-        const newData = { ...rawDb, blogPosts: posts };
-        setRawDb(newData);
-    };
-
-    const logout = () => setAdminUser(null);
-
-    return (
-        <DatabaseContext.Provider value={{ data, allData: rawDb, isSynced, updateGames, updateBlog, syncWithCloud, adminUser, logout }}>
-            {children}
-        </DatabaseContext.Provider>
-    );
-};
-
-interface ThemeContextType {
-    isDarkMode: boolean;
-    isHighContrast: boolean;
-    toggleTheme: () => void;
-    toggleHighContrast: () => void;
-}
-
-const ThemeContext = createContext<ThemeContextType>({ 
-    isDarkMode: true, 
-    isHighContrast: false, 
-    toggleTheme: () => {}, 
-    toggleHighContrast: () => {} 
-});
-
-export const useTheme = () => useContext(ThemeContext);
-
-const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [isDarkMode, setIsDarkMode] = useState(() => {
-        const saved = localStorage.getItem('theme');
-        return saved ? saved === 'dark' : true;
-    });
-
-    const [isHighContrast, setIsHighContrast] = useState(() => {
-        const saved = localStorage.getItem('high-contrast');
-        return saved === 'true';
-    });
-
-    useEffect(() => {
-        document.body.classList.toggle('light-mode', !isDarkMode);
-        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-    }, [isDarkMode]);
-
-    useEffect(() => {
-        document.body.classList.toggle('high-contrast', isHighContrast);
-        localStorage.setItem('high-contrast', String(isHighContrast));
-    }, [isHighContrast]);
-
-    const toggleTheme = () => setIsDarkMode(prev => !prev);
-    const toggleHighContrast = () => setIsHighContrast(prev => !prev);
-
-    return (
-        <ThemeContext.Provider value={{ isDarkMode, isHighContrast, toggleTheme, toggleHighContrast }}>
-            {children}
-        </ThemeContext.Provider>
-    );
-};
+// --- DATABASE CONTEXT REMOVED (Moved to contexts.tsx) ---
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
@@ -554,7 +365,7 @@ const Footer: React.FC = () => {
                     <ul className="space-y-4 text-xs font-black uppercase tracking-widest text-gray-500">
                         <li><Link to="/news" className="hover:text-amber-500 transition-colors">News Hub</Link></li>
                         <li><Link to="/about#press" className="hover:text-amber-500 transition-colors">Press Assets</Link></li>
-                        <li><a href="mailto:leftsidedstudios@gmail.com" className="hover:text-amber-500 transition-colors">Inquiries</a></li>
+                        <li><a href="https://discord.gg/A8XMvSnkCU" className="hover:text-amber-500 transition-colors">Inquiries</a></li>
                         <li><a href="https://sites.google.com/view/leftsidedstudios/" target="_blank" className="hover:text-amber-500 transition-colors">Legacy Site</a></li>
                     </ul>
                 </div>
@@ -598,6 +409,33 @@ const AnimatedRoutes: React.FC = () => {
     );
 };
 
+const BackgroundBar: React.FC = () => {
+    const { isDarkMode } = useTheme();
+    const color = isDarkMode ? '0, 0, 0' : '255, 255, 255';
+    
+    return (
+        <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+            <div 
+                className="w-full h-full transition-all duration-700"
+                style={{
+                    background: `linear-gradient(to right, 
+                        transparent 0%, 
+                        rgba(${color}, 0.1) 3%, 
+                        rgba(${color}, 0.4) 7%, 
+                        rgba(${color}, 0.8) 11%, 
+                        rgba(${color}, 0.98) 15%, 
+                        rgba(${color}, 0.98) 85%, 
+                        rgba(${color}, 0.8) 89%, 
+                        rgba(${color}, 0.4) 93%, 
+                        rgba(${color}, 0.1) 97%, 
+                        transparent 100%
+                    )`
+                }}
+            />
+        </div>
+    );
+};
+
 const App: React.FC = () => {
     return (
         <DatabaseProvider>
@@ -606,11 +444,13 @@ const App: React.FC = () => {
                     <ScrollToTop />
                     <AnchorScroll />
                     <div className="min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+                        <BackgroundBar />
                         <Navbar />
-                        <main className="flex-grow pt-24 pb-20 px-6 max-w-7xl mx-auto w-full">
+                        <main className="flex-grow pt-24 pb-20 px-6 w-full max-w-[1400px] mx-auto">
                             <AnimatedRoutes />
                         </main>
                         <Footer />
+                        <Chatbot />
                     </div>
                 </BrowserRouter>
             </ThemeProvider>

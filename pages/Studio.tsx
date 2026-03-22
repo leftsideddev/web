@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { db } from '../constants';
-import { useTheme } from '../App';
+import { useTheme, useDatabase } from '../contexts';
 import { History, Info, Download, Mail, Layout, Terminal, Compass, Zap, GitBranch, Share2, CheckCircle2, ArrowRight } from 'lucide-react';
 
 const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, delay?: number }> = ({ children, className, delay = 0 }) => (
@@ -43,6 +42,7 @@ const FamilyTreeNode: React.FC<{
 
 const Studio: React.FC = () => {
     const { isDarkMode } = useTheme();
+    const { data } = useDatabase();
     const [downloadingAsset, setDownloadingAsset] = useState<string | null>(null);
 
     const handleDownload = (e: React.MouseEvent, label: string) => {
@@ -87,7 +87,7 @@ const Studio: React.FC = () => {
                     transition={{ delay: 0.6, duration: 0.8 }}
                     className="text-xl text-gray-400 max-w-2xl mx-auto font-light leading-relaxed italic"
                 >
-                    "{db.about.text}"
+                    "{data.about.text}"
                 </motion.p>
             </header>
 
@@ -97,14 +97,14 @@ const Studio: React.FC = () => {
                     <div className={`p-10 h-full rounded-3xl border transition-all hover:border-emerald-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
                         <Compass className="w-10 h-10 text-emerald-500 mb-8" />
                         <h2 className="text-2xl font-black uppercase tracking-tight mb-4">Philosophy</h2>
-                        <p className="text-gray-500 leading-relaxed text-lg">{db.about.philosophy}</p>
+                        <p className="text-gray-500 leading-relaxed text-lg">{data.about.philosophy}</p>
                     </div>
                 </FadeInSection>
                 <FadeInSection delay={0.2}>
                     <div className={`p-10 h-full rounded-3xl border transition-all hover:border-purple-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
                         <Zap className="w-10 h-10 text-purple-500 mb-8" />
                         <h2 className="text-2xl font-black uppercase tracking-tight mb-4">Mission</h2>
-                        <p className="text-gray-500 leading-relaxed text-lg">{db.about.mission}</p>
+                        <p className="text-gray-500 leading-relaxed text-lg">{data.about.mission}</p>
                     </div>
                 </FadeInSection>
             </div>
@@ -116,7 +116,7 @@ const Studio: React.FC = () => {
                     <h2 className="text-3xl font-black uppercase tracking-tight">Timeline of Growth</h2>
                 </div>
                 <div className="space-y-12 relative before:absolute before:left-[17px] before:top-2 before:bottom-2 before:w-px before:bg-white/10">
-                    {db.timeline.map((event, i) => (
+                    {data.timeline.map((event, i) => (
                         <div 
                             key={i} 
                             className="relative pl-16 group cursor-default transition-all"
@@ -164,7 +164,10 @@ const Studio: React.FC = () => {
 
                         <div className="md:col-span-4 flex flex-col items-center">
                             <div className="mb-4 text-[10px] font-black uppercase tracking-widest text-gray-600 opacity-50">Strategic Alignment</div>
-                            <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" />
+                            <div className="flex flex-col gap-4">
+                                <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" />
+                                <FamilyTreeNode name="Geekza Productions" type="Creative Partner" color="text-blue-500" />
+                            </div>
                             <div className="w-full flex justify-center py-4" aria-hidden="true">
                                 <div className="h-12 w-px bg-gradient-to-b from-blue-500 to-transparent"></div>
                             </div>
@@ -193,7 +196,7 @@ const Studio: React.FC = () => {
                         <h3 className="text-4xl font-black tracking-tighter mb-6 leading-none">Press Kit & Branding</h3>
                         <p className="text-gray-500 mb-10 text-sm">Download official logos, screenshots, and studio descriptions for use in your content.</p>
                         <div className="space-y-4">
-                            {db.pressAssets.map((asset, i) => (
+                            {data.pressAssets.map((asset, i) => (
                                 <a 
                                     key={i} 
                                     href={asset.url} 
@@ -223,12 +226,12 @@ const Studio: React.FC = () => {
                             </div>
                             <div>
                                 <h4 className="text-[10px] font-black uppercase text-gray-600 mb-2">Direct Inquiries</h4>
-                                <p className="text-sm font-bold">LeftSidedStudios@gmail.com</p>
+                                <p className="text-sm font-bold">Contact via Socials</p>
                             </div>
                         </div>
                         <div className="pt-8">
-                             <button onClick={() => window.location.href='mailto:leftsidedstudios@gmail.com'} className="group flex items-center gap-3 text-white bg-emerald-600 hover:bg-emerald-700 px-8 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl shadow-emerald-500/20 outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/50">
-                                <Mail className="w-4 h-4" /> Request Interview
+                             <button onClick={() => window.location.href='https://discord.gg/A8XMvSnkCU'} className="group flex items-center gap-3 text-white bg-emerald-600 hover:bg-emerald-700 px-8 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl shadow-emerald-500/20 outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/50">
+                                <Mail className="w-4 h-4" /> Reach Out
                                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                              </button>
                         </div>

@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, ArrowRight, Map, CheckCircle, Circle, Layers, Calendar, MapPin, Info, PlayCircle } from 'lucide-react';
-import { useTheme, useDatabase } from '../App';
+import { useTheme, useDatabase } from '../contexts';
 
 const SeriesDetail: React.FC = () => {
     const { id } = useParams();

@@ -5,9 +5,10 @@ import {
     Calendar, Share2, ArrowLeft, Clock, X, Tag, BookOpen, Eye, 
     Copy, MoreHorizontal, Check
 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { useTheme, useDatabase } from '../App';
+// import ReactMarkdown from 'react-markdown';
+// import remarkGfm from 'remark-gfm';
+import { useTheme, useDatabase } from '../contexts';
+import { SafeMarkdown } from '../components/SafeMarkdown';
 
 const ShareModal: React.FC<{ 
     isOpen: boolean; 
@@ -219,10 +220,10 @@ const BlogPost: React.FC = () => {
         const processedContent = content.replace(/\[img:(.*?)\]/g, '![]($1)');
 
         return (
-            <ReactMarkdown 
-                remarkPlugins={[remarkGfm]}
+            <SafeMarkdown 
+                content={processedContent}
                 components={{
-                    img: ({ src, alt }) => (
+                    img: ({ src, alt }: any) => (
                         <motion.img 
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
@@ -233,18 +234,16 @@ const BlogPost: React.FC = () => {
                             className={`w-full h-auto rounded-3xl my-12 border border-white/5 shadow-2xl cursor-zoom-in ${isReaderMode ? 'max-w-3xl mx-auto' : ''}`}
                         />
                     ),
-                    p: ({ children }) => <p className={`mb-6 leading-relaxed font-light ${isReaderMode ? 'text-xl text-neutral-300 font-serif leading-loose' : 'text-lg text-gray-300'}`}>{children}</p>,
-                    h1: ({ children }) => <h1 className="text-4xl font-black mt-12 mb-6 uppercase tracking-tight text-white">{children}</h1>,
-                    h2: ({ children }) => <h2 className="text-3xl font-black mt-10 mb-5 uppercase tracking-tight text-white">{children}</h2>,
-                    h3: ({ children }) => <h3 className="text-2xl font-black mt-8 mb-4 uppercase tracking-tight text-emerald-500">{children}</h3>,
-                    ul: ({ children }) => <ul className={`list-disc list-inside mb-8 space-y-2 ${isReaderMode ? 'text-neutral-400' : 'text-gray-400'}`}>{children}</ul>,
-                    ol: ({ children }) => <ol className={`list-decimal list-inside mb-8 space-y-2 ${isReaderMode ? 'text-neutral-400' : 'text-gray-400'}`}>{children}</ol>,
-                    li: ({ children }) => <li className="text-lg font-light">{children}</li>,
-                    blockquote: ({ children }) => <blockquote className="border-l-4 border-emerald-500 pl-6 my-8 italic text-gray-400 text-xl">{children}</blockquote>,
+                    p: ({ children }: any) => <p className={`mb-6 leading-relaxed font-light ${isReaderMode ? 'text-xl text-neutral-300 font-serif leading-loose' : 'text-lg text-gray-300'}`}>{children}</p>,
+                    h1: ({ children }: any) => <h1 className="text-4xl font-black mt-12 mb-6 uppercase tracking-tight text-white">{children}</h1>,
+                    h2: ({ children }: any) => <h2 className="text-3xl font-black mt-10 mb-5 uppercase tracking-tight text-white">{children}</h2>,
+                    h3: ({ children }: any) => <h3 className="text-2xl font-black mt-8 mb-4 uppercase tracking-tight text-emerald-500">{children}</h3>,
+                    ul: ({ children }: any) => <ul className={`list-disc list-inside mb-8 space-y-2 ${isReaderMode ? 'text-neutral-400' : 'text-gray-400'}`}>{children}</ul>,
+                    ol: ({ children }: any) => <ol className={`list-decimal list-inside mb-8 space-y-2 ${isReaderMode ? 'text-neutral-400' : 'text-gray-400'}`}>{children}</ol>,
+                    li: ({ children }: any) => <li className="text-lg font-light">{children}</li>,
+                    blockquote: ({ children }: any) => <blockquote className="border-l-4 border-emerald-500 pl-6 my-8 italic text-gray-400 text-xl">{children}</blockquote>,
                 }}
-            >
-                {processedContent}
-            </ReactMarkdown>
+            />
         );
     };
 

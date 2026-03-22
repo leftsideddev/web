@@ -1,17 +1,16 @@
 
 import { DB } from './types';
 
-// Points to our local Netlify function bridge
-export const BACKEND_URL = "/.netlify/functions/db-sync";
+// Points to our local server API
+export const BACKEND_URL = "/api/db";
 
+// constants.ts
 export const ALLOWED_ADMINS = [
-    "vermetra@gmail.com",
-    "baddudepvp1126@gmail.com",
-    "rktspencer@gmail.com"
+    "leftsidedstudios@gmail.com"
 ];
 
 export const db: DB = {
-    version: 2,
+    version: 3,
     about: {
         title: "Welcome to Left-Sided Studios",
         subtitle: "Explore our creations, updates, and more!",
@@ -51,7 +50,7 @@ export const db: DB = {
             ] 
         },
         { 
-            name: "DaRealSansYT", 
+            name: "DaiseealSansYT", 
             role: "Co-Founder", 
             bio: "", 
             image: "", 
@@ -382,6 +381,16 @@ export const db: DB = {
             image: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/cs_banner.png?raw=true",
             website: "https://citadelstudios.netlify.app/",
             tags: ["Development", "Infrastructure", "Horror"],
+            isPublic: true
+        },
+        {
+            id: "geekza",
+            name: "Geekza Productions",
+            type: "Creative Partner",
+            description: "A small studio making indie games and short films in real life.",
+            fullText: "Geekza Productions is a small studio dedicated to crafting unique indie games and compelling short films. Based in the real world, they focus on storytelling and creative expression across digital and cinematic mediums.",
+            image: "https://github.com/leftsideddev/web/blob/main/images/studios/geekzaproductions.png?raw=true",
+            tags: ["Indie Games", "Short Films", "Creative"],
             isPublic: true
         }
     ]

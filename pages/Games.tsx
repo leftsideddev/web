@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useTheme, useDatabase } from '../App';
+import { useTheme, useDatabase } from '../contexts';
 import { GameStatus } from '../types';
 import Card from '../components/Card';
 

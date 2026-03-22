@@ -2,18 +2,18 @@ import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, ChevronRight } from 'lucide-react';
-import { useTheme } from '../App';
-import { db } from '../constants';
+import { useTheme, useDatabase } from '../contexts';
 import Card from '../components/Card';
 
 const Partners: React.FC = () => {
     const { isDarkMode } = useTheme();
+    const { data } = useDatabase();
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
 
     const filteredPartners = useMemo(() => {
-        return db.partners.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.type.toLowerCase().includes(search.toLowerCase()));
-    }, [search]);
+        return data.partners.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.type.toLowerCase().includes(search.toLowerCase()));
+    }, [data, search]);
 
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-12 pb-20">

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Newspaper, Calendar, Search, X, Tag } from 'lucide-react';
-import { useTheme, useDatabase } from '../App';
+import { useTheme, useDatabase } from '../contexts';
 import Card from '../components/Card';
 
 const News: React.FC = () => {

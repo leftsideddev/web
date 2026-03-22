@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Globe, ChevronRight, PlayCircle } from 'lucide-react';
-import { useTheme, useDatabase } from '../App';
+import { useTheme, useDatabase } from '../contexts';
 import Card from '../components/Card';
 
 const PartnerDetail: React.FC = () => {

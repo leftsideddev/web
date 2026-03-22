@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Clock, Mail, ArrowRight } from 'lucide-react';
-import { useTheme } from '../App';
+import { useTheme } from '../contexts';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -135,7 +135,7 @@ When we make changes, we will update the "Last Updated" date at the top of this 
 
 If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, you may contact us at:
 
-**Email:** leftsidedstudios@gmail.com`;
+**Email:** Contact via Discord or Social Media`;
 
     return (
         <motion.div 
@@ -183,10 +183,12 @@ If you have any questions, concerns, or requests regarding this Privacy Policy o
                         </p>
                     </div>
                     <a 
-                        href="mailto:leftsidedstudios@gmail.com" 
+                        href="https://discord.gg/A8XMvSnkCU" 
+                        target="_blank"
+                        rel="noreferrer"
                         className="flex items-center gap-4 bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-sm transition-all shadow-xl shadow-emerald-500/20 active:scale-95 group"
                     >
-                        <Mail className="w-5 h-5" /> leftsidedstudios@gmail.com
+                        <Mail className="w-5 h-5" /> Reach Out via Discord
                         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </a>
                 </div>

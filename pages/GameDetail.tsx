@@ -2,9 +2,10 @@ import React, { useMemo, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, ArrowRight, Newspaper, Map, CheckCircle, Circle, Layers, Monitor, Calendar, MapPin, Info, Maximize2, X } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { useTheme, useDatabase } from '../App';
+// import ReactMarkdown from 'react-markdown';
+// import remarkGfm from 'remark-gfm';
+import { useTheme, useDatabase } from '../contexts';
+import { SafeMarkdown } from '../components/SafeMarkdown';
 import { GameStatus } from '../types';
 
 const StatusBadge: React.FC<{ status: GameStatus }> = ({ status }) => {
@@ -53,10 +54,10 @@ const GameDetail: React.FC = () => {
     const renderMarkdown = (content: string) => {
         const processedContent = content.replace(/\[img:(.*?)\]/g, '![]($1)');
         return (
-            <ReactMarkdown 
-                remarkPlugins={[remarkGfm]}
+            <SafeMarkdown 
+                content={processedContent}
                 components={{
-                    img: ({ src, alt }) => (
+                    img: ({ src, alt }: any) => (
                         <motion.img 
                             initial={{ opacity: 0 }} 
                             whileInView={{ opacity: 1 }}
@@ -67,16 +68,14 @@ const GameDetail: React.FC = () => {
                             alt={alt || "Project screenshot"} 
                         />
                     ),
-                    p: ({ children }) => <p className="mb-4 leading-relaxed font-light text-gray-400">{children}</p>,
-                    h1: ({ children }) => <h1 className="text-3xl font-black mt-8 mb-4 uppercase text-white">{children}</h1>,
-                    h2: ({ children }) => <h2 className="text-2xl font-black mt-6 mb-3 uppercase text-white">{children}</h2>,
-                    h3: ({ children }) => <h3 className="text-xl font-black mt-4 mb-2 uppercase text-emerald-500">{children}</h3>,
-                    ul: ({ children }) => <ul className="list-disc list-inside mb-4 space-y-1 text-gray-500">{children}</ul>,
-                    li: ({ children }) => <li className="text-base">{children}</li>,
+                    p: ({ children }: any) => <p className="mb-4 leading-relaxed font-light text-gray-400">{children}</p>,
+                    h1: ({ children }: any) => <h1 className="text-3xl font-black mt-8 mb-4 uppercase text-white">{children}</h1>,
+                    h2: ({ children }: any) => <h2 className="text-2xl font-black mt-6 mb-3 uppercase text-white">{children}</h2>,
+                    h3: ({ children }: any) => <h3 className="text-xl font-black mt-4 mb-2 uppercase text-emerald-500">{children}</h3>,
+                    ul: ({ children }: any) => <ul className="list-disc list-inside mb-4 space-y-1 text-gray-500">{children}</ul>,
+                    li: ({ children }: any) => <li className="text-base">{children}</li>,
                 }}
-            >
-                {processedContent}
-            </ReactMarkdown>
+            />
         );
     };
 
