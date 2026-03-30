@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Gamepad2, Users, Youtube, Twitter, Zap, User, Newspaper, ArrowRight, Star, Info, PlayCircle, History } from 'lucide-react';
+import { Gamepad2, Users, Youtube, Twitter, Zap, User, Newspaper, ArrowRight, Star, Info, PlayCircle, History, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme, useDatabase } from '../contexts';
 import { GameStatus, TeamMember } from '../types';
 import Card from '../components/Card';
@@ -63,6 +63,43 @@ const Home: React.FC = () => {
 
     const latestNews = data.news && data.news.length > 0 ? data.news[0] : null;
 
+    const carouselImages = [
+        { 
+            url: isDarkMode ? data.about.featuredImage : data.about.featuredImageLight, 
+            title: data.about.subtitle,
+            path: '/about'
+        },
+        { 
+            url: "https://raw.githubusercontent.com/leftsideddev/web/main/images/games/cardamania_promo_image.png?raw=true", 
+            title: "Cardamania: Lead your Academy to Victory",
+            path: '/games/cardamania'
+        },
+        { 
+            url: "https://github.com/leftsideddev/web/blob/main/images/leftsidedgodot.png?raw=true", 
+            title: "LSS Goes All-In on Godot 4.6",
+            path: '/news/godot-migration'
+        }
+    ];
+
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+        }, 6000);
+        return () => clearInterval(timer);
+    }, [carouselImages.length]);
+
+    const nextSlide = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+    };
+    
+    const prevSlide = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+    };
+
     return (
         <motion.div variants={container} initial="hidden" animate="show">
             
@@ -71,26 +108,77 @@ const Home: React.FC = () => {
                 {/* --- LEFT COLUMN --- */}
                 <div className="lg:col-span-7 flex flex-col gap-8">
                     
-                    {/* Hero Section */}
-                    <motion.section id="hero" variants={item} className="relative h-[400px] md:h-[450px] w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex-shrink-0">
-                        <img 
-                            src={isDarkMode ? data.about.featuredImage : data.about.featuredImageLight} 
-                            className="absolute inset-0 w-full h-full object-cover" 
-                            alt=""
-                        />
-                        <div className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-t from-black via-transparent to-transparent' : 'bg-gradient-to-t from-white via-transparent to-transparent'}`}></div>
-                        <div className="absolute bottom-0 left-0 p-8 md:p-14">
-                            <p className={`text-xl md:text-2xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} leading-tight drop-shadow-md max-w-md font-black tracking-tight uppercase`}>
-                                {data.about.subtitle}
-                            </p>
+                    {/* Hero Section - Carousel */}
+                    <motion.section 
+                        id="hero" 
+                        variants={item} 
+                        className="relative h-[400px] md:h-[450px] w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex-shrink-0 group cursor-pointer"
+                        onClick={() => navigate(carouselImages[currentSlide].path)}
+                    >
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={currentSlide}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.6, ease: "easeInOut" }}
+                                className="absolute inset-0"
+                            >
+                                <img 
+                                    src={carouselImages[currentSlide].url} 
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                                    alt={carouselImages[currentSlide].title}
+                                />
+                                <div className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-t from-black via-transparent to-transparent' : 'bg-gradient-to-t from-white via-transparent to-transparent'}`}></div>
+                                <div className="absolute bottom-0 left-0 p-8 md:p-14 w-full">
+                                    <motion.p 
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.3 }}
+                                        className={`text-xl md:text-2xl ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} leading-tight drop-shadow-md max-w-md font-black tracking-tight uppercase`}
+                                    >
+                                        {carouselImages[currentSlide].title}
+                                    </motion.p>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Carousel Controls */}
+                        <div className="absolute inset-x-0 bottom-8 flex justify-center gap-2 z-10">
+                            {carouselImages.map((_, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setCurrentSlide(idx);
+                                    }}
+                                    className={`w-2 h-2 rounded-full transition-all ${currentSlide === idx ? 'bg-emerald-500 w-6' : 'bg-white/30 hover:bg-white/50'}`}
+                                    aria-label={`Go to slide ${idx + 1}`}
+                                />
+                            ))}
                         </div>
+
+                        <button 
+                            onClick={prevSlide}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/40 z-20"
+                            aria-label="Previous slide"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button 
+                            onClick={nextSlide}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/40 z-20"
+                            aria-label="Next slide"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
                     </motion.section>
 
                     {/* Team Section */}
                     <motion.section id="founders" variants={item} className="flex-shrink-0">
                         <h2 className={`text-xl font-black mb-6 uppercase tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Meet the Team</h2>
                         
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-stretch">
                             {Object.values(data.teamDetails).map((founder: TeamMember, idx) => {
                                 return (
                                     <motion.div 
@@ -101,7 +189,7 @@ const Home: React.FC = () => {
                                             boxShadow: isDarkMode ? `0 25px 50px -12px rgba(16, 185, 129, 0.3)` : "0 25px 50px -12px rgba(0, 0, 0, 0.12)" 
                                         }}
                                         transition={cardTransition}
-                                        className={`p-6 rounded-2xl border flex flex-col items-center text-center cursor-default transition-colors duration-300 ${isDarkMode ? `bg-neutral-900 border-white/5 hover:border-emerald-500/40` : `bg-white border-gray-200 shadow-sm hover:border-emerald-500`}`}
+                                        className={`p-8 rounded-2xl border flex flex-col items-center text-center cursor-default transition-colors duration-300 h-[220px] ${isDarkMode ? `bg-neutral-900 border-white/5 hover:border-emerald-500/40` : `bg-white border-gray-200 shadow-sm hover:border-emerald-500`}`}
                                     >
                                         <img 
                                             src={founder.image} 
@@ -134,7 +222,7 @@ const Home: React.FC = () => {
                     </motion.section>
 
                     {/* Quick Links Row - Refined font size */}
-                    <motion.section variants={item} className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow">
+                    <motion.section variants={item} className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-grow items-stretch">
                         {[
                             { label: 'About', sub: 'The Studio', icon: Info, path: '/about', color: 'text-gray-400', themeKey: 'gray' as const, glow: 'rgba(156, 163, 175, 0.3)' },
                             { label: 'Games', sub: 'Explore titles', icon: Gamepad2, path: '/games', color: 'text-emerald-500', themeKey: 'emerald' as const, glow: 'rgba(16, 185, 129, 0.3)' },
@@ -150,7 +238,7 @@ const Home: React.FC = () => {
                                     }}
                                     transition={cardTransition}
                                     onClick={() => navigate(link.path)}
-                                    className={`py-6 px-4 rounded-2xl border cursor-pointer group transition-colors duration-300 flex flex-col items-center text-center justify-center ${isDarkMode ? `bg-neutral-900 border-white/5 hover:border-emerald-500/40` : `bg-white border-gray-200 hover:border-emerald-500`}`}
+                                    className={`p-8 rounded-2xl border cursor-pointer group transition-colors duration-300 flex flex-col items-center text-center justify-center min-h-[220px] ${isDarkMode ? `bg-neutral-900 border-white/5 hover:border-emerald-500/40` : `bg-white border-gray-200 hover:border-emerald-500`}`}
                                 >
                                     <link.icon className={`w-9 h-9 mb-3 transition-colors ${link.color}`} />
                                     <h2 className={`text-base font-black mb-1 transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:${link.color}`}>{link.label}</h2>
@@ -206,7 +294,7 @@ const Home: React.FC = () => {
                             <Star className="w-5 h-5 text-yellow-500 fill-yellow-500/20" />
                             <h2 className={`text-xl font-black uppercase tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Project Spotlight</h2>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow auto-rows-fr">
                             {spotlightProjects.map((project, idx) => {
                                 const isCardamania = project.id === 'cardamania';
                                 const isGame = project.projectType === 'game';

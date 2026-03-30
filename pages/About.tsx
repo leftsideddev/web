@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTheme, useDatabase } from '../contexts';
-import { History, Info, Download, Mail, Layout, Terminal, Compass, Zap, GitBranch, Share2, CheckCircle2, ArrowRight, ExternalLink } from 'lucide-react';
+import { History, Info, Download, Mail, Layout, Terminal, Compass, Zap, GitBranch, Share2, CheckCircle2, ArrowRight, ExternalLink, HelpCircle, ChevronDown } from 'lucide-react';
 
 const FadeInSection: React.FC<{ children: React.ReactNode, className?: string, id?: string }> = ({ children, className, id }) => (
     <motion.section 
@@ -65,12 +65,72 @@ const TimelineTooltip: React.FC<{ content: string }> = ({ content }) => {
     );
 };
 
+const FAQItem: React.FC<{ question: string; answer: string }> = ({ question, answer }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const { isDarkMode } = useTheme();
+
+    return (
+        <div className={`border-b ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+            <button 
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full py-6 flex items-center justify-between text-left group"
+            >
+                <span className={`text-lg font-bold uppercase tracking-tight transition-colors ${isOpen ? 'text-emerald-500' : isDarkMode ? 'text-white group-hover:text-emerald-400' : 'text-gray-900 group-hover:text-emerald-600'}`}>
+                    {question}
+                </span>
+                <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isOpen ? 'rotate-180 text-emerald-500' : 'text-gray-500'}`} />
+            </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                    >
+                        <p className="pb-8 text-gray-500 leading-relaxed font-light">
+                            {answer}
+                        </p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
 const About: React.FC = () => {
     const { isDarkMode } = useTheme();
     const { data } = useDatabase();
     const navigate = useNavigate();
     const [downloadingAsset, setDownloadingAsset] = useState<boolean>(false);
     const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
+
+    const scrollToSection = (id: string) => {
+        const element = document.getElementById(id);
+        if (element) {
+            const offset = 100; // Account for sticky header
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    const navItems = [
+        { id: 'philosophy', label: 'Philosophy' },
+        { id: 'mission', label: 'Mission' },
+        { id: 'timeline', label: 'Timeline' },
+        { id: 'network', label: 'Ecosystem' },
+        { id: 'press', label: 'Press Kit' }
+    ];
+
+    if (!data) return null;
 
     const timelineContexts = [
         "The studio's soul was forged in the summer of 2023. DaRealSansYT and RocketBlasts visited Vermetra's house for a week, conceptualizing the LSS journey.",
@@ -94,7 +154,7 @@ const About: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            <header className="flex flex-col items-center text-center mb-32">
+            <header className="flex flex-col items-center text-center mb-16">
                 <motion.h1 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -113,18 +173,35 @@ const About: React.FC = () => {
                 </motion.p>
             </header>
 
-            <FadeInSection className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
-                <div className={`p-10 rounded-3xl border transition-all hover:border-emerald-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
+            {/* Sticky Sub-Navigation */}
+            <div className={`sticky top-0 z-40 w-full backdrop-blur-md border-b ${isDarkMode ? 'bg-black/40 border-white/10' : 'bg-white/40 border-black/10'} mb-16 -mx-4 px-4`}>
+                <div className="max-w-6xl mx-auto overflow-x-auto no-scrollbar">
+                    <div className="flex items-center justify-center gap-4 md:gap-8 py-4 min-w-max">
+                        {navItems.map((item) => (
+                            <button
+                                key={item.id}
+                                onClick={() => scrollToSection(item.id)}
+                                className={`text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${isDarkMode ? 'text-gray-400 hover:text-emerald-400' : 'text-gray-600 hover:text-emerald-600'}`}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
+                <FadeInSection id="philosophy" className={`p-10 rounded-3xl border transition-all hover:border-emerald-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
                     <Compass className="w-10 h-10 text-emerald-500 mb-8" />
-                    <h2 className="text-2xl font-black uppercase tracking-tight mb-4 text-white">Philosophy</h2>
+                    <h2 className={`text-2xl font-black uppercase tracking-tight mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Philosophy</h2>
                     <p className="text-gray-500 leading-relaxed text-lg">{data.about.philosophy}</p>
-                </div>
-                <div className={`p-10 rounded-3xl border transition-all hover:border-purple-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
+                </FadeInSection>
+                <FadeInSection id="mission" className={`p-10 rounded-3xl border transition-all hover:border-purple-500/30 ${isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
                     <Zap className="w-10 h-10 text-purple-500 mb-8" />
-                    <h2 className="text-2xl font-black uppercase tracking-tight mb-4 text-white">Mission</h2>
+                    <h2 className={`text-2xl font-black uppercase tracking-tight mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Mission</h2>
                     <p className="text-gray-500 leading-relaxed text-lg">{data.about.mission}</p>
-                </div>
-            </FadeInSection>
+                </FadeInSection>
+            </div>
 
             <FadeInSection id="timeline" className="mb-32">
                 <div className="flex items-center gap-3 mb-16">
@@ -201,6 +278,31 @@ const About: React.FC = () => {
                         </div>
 
                     </div>
+                </div>
+            </FadeInSection>
+
+            <FadeInSection id="faq" className="mb-32">
+                <div className="flex items-center gap-3 mb-12">
+                    <HelpCircle className="w-8 h-8 text-emerald-500" />
+                    <h2 className="text-3xl font-black uppercase tracking-tight">Frequently Asked Questions</h2>
+                </div>
+                <div className={`p-8 md:p-12 rounded-[3rem] border ${isDarkMode ? 'bg-neutral-900/50 border-white/5' : 'bg-white border-gray-100 shadow-sm'}`}>
+                    <FAQItem 
+                        question="How did Left-Sided Studios begin?" 
+                        answer="The studio's soul was forged in the summer of 2023. Founders DaRealSansYT and RocketBlasts visited Vermetra's house for a week, conceptualizing the LSS journey and our commitment to transparency and narrative depth."
+                    />
+                    <FAQItem 
+                        question="What does the development cycle look like?" 
+                        answer="Our process is iterative and collaborative. We leverage our studio ecosystem—including subsidiaries like ANdE and Gotch-ya—to specialize in different genres while maintaining a unified creative vision and high production standards."
+                    />
+                    <FAQItem 
+                        question="How can I get involved with the LSS community?" 
+                        answer="We are highly active on Discord and social media. Our community is a core part of our development process, providing feedback and ideas that shape our titles. Join our Discord server to participate in playtests and community events."
+                    />
+                    <FAQItem 
+                        question="Does LSS work with other studios?" 
+                        answer="Yes, we maintain strategic alignments with partners like Citadel Studios to co-produce high-fidelity content and expand our production capabilities across the indie landscape."
+                    />
                 </div>
             </FadeInSection>
 

@@ -116,8 +116,8 @@ const Card: React.FC<CardProps> = ({
             </div>
             
             <div className="p-6 flex-grow flex flex-col">
-                <div className="flex flex-wrap items-baseline gap-x-2 mb-2">
-                    <h3 className={`text-2xl font-bold transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:${activeTheme.text}`}>{title}</h3>
+                <div className="flex flex-col gap-2 mb-2 min-h-[4.5rem] justify-center">
+                    <h3 className={`text-2xl font-bold transition-colors leading-tight line-clamp-2 ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:${activeTheme.text}`}>{title}</h3>
                     {subtitle && subtitlePosition === 'body' && (
                         <div className={`text-[10px] font-black uppercase tracking-widest transition-colors ${activeTheme.text} opacity-60`}>
                           {subtitle}

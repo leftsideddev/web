@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { DatabaseProvider, ThemeProvider, useTheme, useDatabase } from './contexts';
 import { SafeMarkdown } from './components/SafeMarkdown';
+import { LSS_LOGO_DARK, LSS_LOGO_LIGHT, LSS_EASTER_EGG_SOUND } from './constants';
 
 // Pages
 import Home from './pages/Home';
@@ -60,6 +61,23 @@ const AnchorScroll = () => {
     return null;
 };
 
+const HighlightText: React.FC<{ text: string; highlight: string }> = ({ text, highlight }) => {
+    if (!highlight.trim()) return <>{text}</>;
+    const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    return (
+        <>
+            {parts.map((part, i) => 
+                regex.test(part) ? (
+                    <span key={i} className="text-emerald-500 bg-emerald-500/10 px-0.5 rounded-sm">{part}</span>
+                ) : (
+                    part
+                )
+            )}
+        </>
+    );
+};
+
 const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
     const { isDarkMode } = useTheme();
     const { data } = useDatabase();
@@ -81,9 +99,10 @@ const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
     }, [data]);
 
     const results = useMemo(() => {
-        const q = query.toLowerCase();
+        const q = query.toLowerCase().trim();
         let items: any[] = [];
 
+        // Aggregate all searchable items
         data.games.forEach(g => items.push({ id: g.id, title: g.title, desc: g.description, type: 'Project', path: `/games/${g.id}`, image: g.image, status: g.status, genres: g.genres }));
         data.blogPosts.forEach(b => items.push({ id: b.id, title: b.title, desc: b.excerpt, type: 'Article', path: `/news/${b.id}`, image: b.image }));
         data.subsidiaries.forEach(s => {
@@ -107,17 +126,50 @@ const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
         siteItems.forEach(si => items.push({ ...si, image: '' }));
 
         const uniqueItems = Array.from(new Map(items.map(item => [item.id, item])).values());
-        return uniqueItems.filter(i => {
-            const matchesQuery = !q || i.title.toLowerCase().includes(q) || i.desc.toLowerCase().includes(q);
-            const matchesType = selectedType === 'All' || i.type === selectedType;
-            let matchesStatus = true;
-            let matchesGenre = true;
-            if (i.type === 'Project' && i.status) {
-                matchesStatus = selectedStatus === 'All' || i.status === selectedStatus;
-                matchesGenre = selectedGenre === 'All' || (i.genres?.includes(selectedGenre) ?? false);
-            }
-            return matchesQuery && matchesType && matchesStatus && matchesGenre;
-        });
+
+        // Parse query for prefixes
+        let searchTerms = q;
+        let forcedType: string | null = null;
+
+        const prefixMap: Record<string, string> = {
+            'game': 'Project',
+            'project': 'Project',
+            'news': 'Article',
+            'article': 'Article',
+            'blog': 'Article',
+            'studio': 'Studio',
+            'subsidiary': 'Studio',
+            'partner': 'Partner',
+            'site': 'Site',
+            'page': 'Site'
+        };
+
+        const firstWord = q.split(' ')[0];
+        if (prefixMap[firstWord]) {
+            forcedType = prefixMap[firstWord];
+            searchTerms = q.substring(firstWord.length).trim();
+        }
+
+        if (!q) return [];
+
+        return uniqueItems
+            .map(item => {
+                const titleMatch = item.title.toLowerCase().includes(searchTerms);
+                const descMatch = item.desc.toLowerCase().includes(searchTerms);
+                const typeMatch = forcedType ? item.type === forcedType : true;
+                
+                let score = 0;
+                if (titleMatch) score += 10;
+                if (descMatch) score += 5;
+                if (forcedType && item.type === forcedType) {
+                    if (titleMatch || descMatch) score += 50; // High priority for type + keyword match
+                }
+                if (selectedType !== 'All' && item.type === selectedType) score += 20;
+
+                return { ...item, score, titleMatch, descMatch };
+            })
+            .filter(i => (i.titleMatch || i.descMatch) && (selectedType === 'All' || i.type === selectedType))
+            .sort((a, b) => b.score - a.score);
     }, [query, data, selectedType, selectedStatus, selectedGenre]);
 
     return (
@@ -188,8 +240,12 @@ const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
                                                         <span className={`text-[8px] font-black px-2 py-0.5 rounded-full border ${item.type === 'Project' ? 'text-emerald-500 border-emerald-500/20' : item.type === 'Article' ? 'text-amber-500 border-amber-500/20' : item.type === 'Studio' ? 'text-purple-500 border-purple-500/20' : item.type === 'Site' ? 'text-amber-500 border-amber-500/20' : 'text-blue-500 border-blue-500/20'} uppercase tracking-widest`}>{item.type}</span>
                                                         {item.status && <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest opacity-60">• {item.status}</span>}
                                                     </div>
-                                                    <h4 className={`font-bold text-lg truncate ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-emerald-500 transition-colors`}>{item.title}</h4>
-                                                    <p className="text-xs text-gray-500 truncate font-medium">{item.desc}</p>
+                                                    <h4 className={`font-bold text-lg truncate ${isDarkMode ? 'text-white' : 'text-gray-900'} group-hover:text-emerald-500 transition-colors`}>
+                                                        <HighlightText text={item.title} highlight={query.split(' ').length > 1 && results[0].score > 50 ? query.split(' ').slice(1).join(' ') : query} />
+                                                    </h4>
+                                                    <p className="text-xs text-gray-500 truncate font-medium">
+                                                        <HighlightText text={item.desc} highlight={query.split(' ').length > 1 && results[0].score > 50 ? query.split(' ').slice(1).join(' ') : query} />
+                                                    </p>
                                                 </div>
                                                 <ChevronRight className="w-4 h-4 text-gray-700 group-hover:text-emerald-500 transition-colors group-hover:translate-x-1" />
                                             </button>
@@ -214,8 +270,20 @@ const Navbar: React.FC = () => {
     const { isDarkMode, isHighContrast, toggleTheme, toggleHighContrast } = useTheme();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
+
+    const handleHomeClick = (e: React.MouseEvent) => {
+        const newCount = clickCount + 1;
+        setClickCount(newCount);
+        
+        if (newCount === 10) {
+            const audio = new Audio(LSS_EASTER_EGG_SOUND);
+            audio.play().catch(err => console.error("Error playing easter egg sound:", err));
+            setClickCount(0); // Reset after playing
+        }
+    };
 
     const navLinks = [
         { name: 'HOME', path: '/', color: 'emerald' },
@@ -242,8 +310,20 @@ const Navbar: React.FC = () => {
         <>
             <nav className={`fixed top-0 w-full z-50 border-b ${isDarkMode ? 'bg-black/80 border-white/10' : 'bg-white/90 border-gray-200'} backdrop-blur-md`}>
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <Link to="/" className={`relative text-xl font-bold tracking-tighter transition-colors uppercase py-1 ${isActive('/') ? 'text-emerald-500' : 'text-gray-400 hover:text-white'}`}>
-                        LEFT-SIDED <span className="text-gray-500">STUDIOS</span>
+                    <Link 
+                        to="/" 
+                        onClick={handleHomeClick}
+                        className={`relative flex items-center gap-3 text-xl font-bold tracking-tighter transition-colors uppercase py-1 ${isActive('/') ? 'text-emerald-500' : 'text-gray-400 hover:text-white'}`}
+                    >
+                        <img 
+                            src={isDarkMode ? LSS_LOGO_LIGHT : LSS_LOGO_DARK} 
+                            alt="LSS Logo" 
+                            className="w-8 h-8 object-contain"
+                            referrerPolicy="no-referrer"
+                        />
+                        <span className="hidden sm:inline">
+                            LEFT-SIDED <span className="text-gray-500">STUDIOS</span>
+                        </span>
                         {isActive('/') && <motion.div layoutId="nav-underline" className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-emerald-500 hidden md:block" />}
                     </Link>
                     <div className="hidden md:flex space-x-5 text-[11px] font-black items-center tracking-[0.2em]">
@@ -373,7 +453,7 @@ const Footer: React.FC = () => {
             
             <div className="max-w-7xl mx-auto px-6 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div className="text-gray-600 text-[10px] font-black uppercase tracking-[0.2em]">
-                    &copy; {new Date().getFullYear()} Left-Sided Studios
+                    &copy; 2023-2026 Left-Sided Studios
                 </div>
                 <div className="flex gap-8">
                     <Link to="/contact" className="text-gray-600 hover:text-emerald-500 transition-colors text-[10px] font-black uppercase tracking-widest">Support</Link>
@@ -420,14 +500,14 @@ const BackgroundBar: React.FC = () => {
                 style={{
                     background: `linear-gradient(to right, 
                         transparent 0%, 
-                        rgba(${color}, 0.1) 3%, 
-                        rgba(${color}, 0.4) 7%, 
-                        rgba(${color}, 0.8) 11%, 
-                        rgba(${color}, 0.98) 15%, 
-                        rgba(${color}, 0.98) 85%, 
-                        rgba(${color}, 0.8) 89%, 
-                        rgba(${color}, 0.4) 93%, 
-                        rgba(${color}, 0.1) 97%, 
+                        rgba(${color}, 0) calc(50% - 850px), 
+                        rgba(${color}, 0.3) calc(50% - 780px), 
+                        rgba(${color}, 0.7) calc(50% - 720px), 
+                        rgba(${color}, 0.98) calc(50% - 676px), 
+                        rgba(${color}, 0.98) calc(50% + 676px), 
+                        rgba(${color}, 0.7) calc(50% + 720px), 
+                        rgba(${color}, 0.3) calc(50% + 780px), 
+                        rgba(${color}, 0) calc(50% + 850px), 
                         transparent 100%
                     )`
                 }}

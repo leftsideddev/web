@@ -5,9 +5,17 @@ import { DB } from './types';
 export const BACKEND_URL = "/api/db";
 
 // constants.ts
+export const LSS_LOGO_DARK = "https://github.com/leftsideddev/web/blob/main/images/lss_neo.png?raw=true";
+export const LSS_LOGO_LIGHT = "https://github.com/leftsideddev/web/blob/main/images/lss_neo.png?raw=true";
+export const LSS_EASTER_EGG_SOUND = "https://github.com/leftsideddev/web/blob/main/public/leftsidedsound.mp3?raw=true"; // LSS Sound from project root
+
 export const ALLOWED_ADMINS = [
     "leftsidedstudios@gmail.com"
 ];
+
+// Layout Constants
+export const SPOTLIGHT_COLUMN_MAX_WIDTH = "448px"; // Equivalent to lg:max-w-md
+export const SPOTLIGHT_COLUMN_XL_MAX_WIDTH = "512px"; // Equivalent to xl:max-w-lg
 
 export const db: DB = {
     version: 3,
@@ -15,7 +23,7 @@ export const db: DB = {
         title: "Welcome to Left-Sided Studios",
         subtitle: "Explore our creations, updates, and more!",
         featuredImage: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/leftsided1920.png?raw=true",
-        featuredImageLight: "https://github.com/leftsideddev/web/blob/main/images/studios/leftsided1920_white.png?raw=true",
+        featuredImageLight: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/leftsided1920_white.png?raw=true",
         text: "Here at Left-Sided Studios, we are dedicated to independent game development, sharing original games and projects on GameJolt and other platforms. Founded 2023.",
         quoteAuthor: "Vermetra, Co-Founder",
         philosophy: "We leverage the 'Left Side' of the brain—our creative, intuitive, and unconventional core—to build games that bridge the gap between niche fan culture and polished interactive media.",
@@ -34,7 +42,7 @@ export const db: DB = {
         { year: "2025", event: "Citadel Alliance", description: "In August 2025, LSS entered a strategic partnership with Citadel Studios to co-produce high-fidelity horror and cinematic content." }
     ],
     pressAssets: [
-        { label: "Main Logo (White PNG)", type: "Logo", url: "https://github.com/leftsideddev/web/blob/main/images/studios/leftsided1920_white.png?raw=true" },
+        { label: "Main Logo (White PNG)", type: "Logo", url: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/leftsided1920_white.png?raw=true" },
         { label: "Main Logo (Black PNG)", type: "Logo", url: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/leftsided1920.png?raw=true" },
         { label: "Studio Press Kit (Drive)", type: "Brand Package", url: "https://drive.google.com/drive/folders/15xJ78cDwmnJIIqkjCyqkuzcUuM_zOMWs?usp=drive_link" }
     ],
@@ -50,7 +58,7 @@ export const db: DB = {
             ] 
         },
         { 
-            name: "DaiseealSansYT", 
+            name: "DaRealSansYT", 
             role: "Co-Founder", 
             bio: "", 
             image: "", 
