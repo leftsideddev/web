@@ -90,7 +90,7 @@ const ShareModal: React.FC<{
                                 <img src={postImage} className="w-full h-full object-cover" alt="Preview" />
                             </div>
                             <h4 className="text-xs font-black uppercase tracking-tight line-clamp-1 mb-1">{postTitle}</h4>
-                            <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">leftsidedstudios.netlify.app</p>
+                            <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">leftsidedstudios.com</p>
                         </div>
 
                         <div className="grid grid-cols-4 gap-4 mb-8">

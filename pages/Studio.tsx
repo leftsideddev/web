@@ -156,8 +156,8 @@ const Studio: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                                 <FamilyTreeNode name="ANdE Studios" type="Subsidiary" color="text-purple-500" />
-                                <FamilyTreeNode name="Gotch-ya Studios" type="Subsidiary" color="text-purple-500" />
-                                <FamilyTreeNode name="Bomb Banana" type="Subsidiary" color="text-purple-500" />
+                                <FamilyTreeNode name="DaRealSansYT" type="Subsidiary" color="text-purple-500" />
+                                <FamilyTreeNode name="RocketBlasts" type="Subsidiary" color="text-purple-500" />
                                 <FamilyTreeNode name="Endgame Studios" type="Subsidiary" color="text-purple-500" />
                             </div>
                         </div>

@@ -9,16 +9,12 @@ export const LSS_LOGO_DARK = "https://github.com/leftsideddev/web/blob/main/imag
 export const LSS_LOGO_LIGHT = "https://github.com/leftsideddev/web/blob/main/images/lss_neo.png?raw=true";
 export const LSS_EASTER_EGG_SOUND = "https://github.com/leftsideddev/web/blob/main/public/leftsidedsound.mp3?raw=true"; // LSS Sound from project root
 
-export const ALLOWED_ADMINS = [
-    "leftsidedstudios@gmail.com"
-];
-
 // Layout Constants
 export const SPOTLIGHT_COLUMN_MAX_WIDTH = "448px"; // Equivalent to lg:max-w-md
 export const SPOTLIGHT_COLUMN_XL_MAX_WIDTH = "512px"; // Equivalent to xl:max-w-lg
 
 export const db: DB = {
-    version: 3,
+    version: 5,
     about: {
         title: "Welcome to Left-Sided Studios",
         subtitle: "Explore our creations, updates, and more!",
@@ -38,7 +34,7 @@ export const db: DB = {
     },
     timeline: [
         { year: "2023", event: "Studio Foundation", description: "The studio was born during a summer week at Vermetra's house. While messing around, the founders conceptualized a project inspired by Nintendo's Pikmin, sparking the LSS journey." },
-        { year: "2024", event: "Project Rollout", description: "ANdE, Gotch-ya, and Bomb Banana labels joined the umbrella to diversify our output." },
+        { year: "2024", event: "Project Rollout", description: "ANdE, DaRealSansYT, and RocketBlasts labels joined the umbrella to diversify our output." },
         { year: "2025", event: "Citadel Alliance", description: "In August 2025, LSS entered a strategic partnership with Citadel Studios to co-produce high-fidelity horror and cinematic content." }
     ],
     pressAssets: [
@@ -284,26 +280,26 @@ export const db: DB = {
             isPublic: true
         },
         {
-            id: "gotchya",
-            name: "Gotch-ya Studios",
+            id: "sansytgames",
+            name: "DaRealSansYT",
             type: "Founder Imprint",
             owner: "DaRealSansYT",
             tagline: "Enriching RPGs",
             description: "DaRealSansYT's creative label for narrative-driven RPGs.",
             fullText: "The primary creative vehicle for DaRealSansYT, focusing on deep RPG systems and atmospheric dark fantasy.",
-            image: "https://placehold.co/800x400/3e0909/fecaca?text=GOTCH-YA+STUDIOS",
+            image: "https://placehold.co/800x400/3e0909/fecaca?text=DAREALSANSYT",
             games: [
                 {
-                    id: "gotchya-shadow",
+                    id: "sansyt-sots",
                     title: "Shadow of The Sanctified",
                     description: "Dark fantasy RPG adventure.",
                     fullText: "A world shrouded in darkness, combining classic RPG mechanics with modern storytelling.\n\n***\n\n**Notice:** Development has been officially terminated due to a critical loss of project files.",
                     image: "https://raw.githubusercontent.com/leftsideddev/web/main/images/games/sots1.png?raw=true",
                     releaseDate: "TBA",
-                    status: "Canceled",
+                    status: "REWORKING",
                     genres: ["RPG", "Fantasy"],
                     platforms: ["PC"],
-                    developer: "gotchya",
+                    developer: "sansytgames",
                     link: "https://gamejolt.com/games/SOTF1/1027993",
                     isPublic: true
                 }
@@ -311,8 +307,8 @@ export const db: DB = {
             isPublic: true
         },
         {
-            id: "bomb-banana",
-            name: "Bomb Banana Studios",
+            id: "rocketgames",
+            name: "RocketBlasts",
             type: "Founder Imprint",
             owner: "RocketBlasts",
             tagline: "Quirky & Energetic",
@@ -321,7 +317,7 @@ export const db: DB = {
             image: "https://github.com/leftsideddev/web/blob/main/images/studios/bombbanana.png?raw=true",
             games: [
                 {
-                    id: "bb-eyebo",
+                    id: "rkt-eyebo",
                     title: "Eyebo",
                     description: "Hack-and-slash platformer.",
                     fullText: "Navigate a monster-filled world as a warrior eye.",
@@ -330,7 +326,7 @@ export const db: DB = {
                     status: "In Development",
                     genres: ["Platformer", "Action"],
                     platforms: ["PC", "Web"],
-                    developer: "bomb-banana",
+                    developer: "rocketgames",
                     link: "https://sites.google.com/view/leftsidedstudios/subsidiaries/bomb-banana-studios/eyebo?authuser=0",
                     isPublic: true
                 }

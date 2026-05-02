@@ -1,5 +1,5 @@
 
-export type GameStatus = 'In Development' | 'Released' | 'Paused' | 'Alpha' | 'Beta' | 'Canceled';
+export type GameStatus = 'In Development' | 'Released' | 'Paused' | 'Alpha' | 'Beta' | 'Canceled' | 'REWORKING';
 
 export interface Milestone {
     label: string;

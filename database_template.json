@@ -26,7 +26,7 @@
     {
       "year": "2024",
       "event": "Project Rollout",
-      "description": "ANdE, Gotch-ya, and Bomb Banana labels joined the umbrella to diversify our output."
+      "description": "ANdE, DaRealSansYT, and RocketBlasts labels joined the umbrella to diversify our output."
     },
     {
       "year": "2025",
@@ -289,26 +289,26 @@
       "isPublic": true
     },
     {
-      "id": "gotchya",
-      "name": "Gotch-ya Studios",
+      "id": "sansytgames",
+      "name": "DaRealSansYT",
       "type": "Founder Imprint",
       "owner": "DaRealSansYT",
       "tagline": "Enriching RPGs",
       "description": "DaRealSansYT's creative label for narrative-driven RPGs.",
       "fullText": "The primary creative vehicle for DaRealSansYT, focusing on deep RPG systems and atmospheric dark fantasy.",
-      "image": "https://placehold.co/800x400/3e0909/fecaca?text=GOTCH-YA+STUDIOS",
+      "image": "https://placehold.co/800x400/3e0909/fecaca?text=DAREALSANSYT",
       "games": [
         {
-          "id": "gotchya-shadow",
+          "id": "sansyt-sots",
           "title": "Shadow of The Sanctified",
           "description": "Dark fantasy RPG adventure.",
           "fullText": "A world shrouded in darkness, combining classic RPG mechanics with modern storytelling.\n\n***\n\n**Notice:** Development has been officially terminated due to a critical loss of project files.",
           "image": "https://raw.githubusercontent.com/leftsideddev/web/main/images/games/sots1.png?raw=true",
           "releaseDate": "TBA",
-          "status": "Canceled",
+          "status": "REWORKING",
           "genres": ["RPG", "Fantasy"],
           "platforms": ["PC"],
-          "developer": "gotchya",
+          "developer": "sansytgames",
           "link": "https://gamejolt.com/games/SOTF1/1027993",
           "isPublic": true
         }
@@ -316,8 +316,8 @@
       "isPublic": true
     },
     {
-      "id": "bomb-banana",
-      "name": "Bomb Banana Studios",
+      "id": "rocketgames",
+      "name": "RocketBlasts",
       "type": "Founder Imprint",
       "owner": "RocketBlasts",
       "tagline": "Quirky & Energetic",
@@ -326,7 +326,7 @@
       "image": "https://github.com/leftsideddev/web/blob/main/images/studios/bombbanana.png?raw=true",
       "games": [
         {
-          "id": "bb-eyebo",
+          "id": "rkt-eyebo",
           "title": "Eyebo",
           "description": "Hack-and-slash platformer.",
           "fullText": "Navigate a monster-filled world as a warrior eye.",
@@ -335,7 +335,7 @@
           "status": "In Development",
           "genres": ["Platformer", "Action"],
           "platforms": ["PC", "Web"],
-          "developer": "bomb-banana",
+          "developer": "rocketgames",
           "link": "https://sites.google.com/view/leftsidedstudios/subsidiaries/bomb-banana-studios/eyebo?authuser=0",
           "isPublic": true
         }

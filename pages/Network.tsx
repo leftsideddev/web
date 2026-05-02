@@ -14,6 +14,7 @@ const StatusBadge: React.FC<{ status: GameStatus | string }> = ({ status }) => {
         'Alpha': 'bg-purple-500/10 border-purple-500/30 text-purple-400',
         'Beta': 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
         'Canceled': 'bg-red-500/10 border-red-500/30 text-red-400',
+        'REWORKING': 'bg-neutral-500/10 border-neutral-500/30 text-neutral-400',
         'Active': 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
     };
 
@@ -31,6 +32,45 @@ const Network: React.FC = () => {
 
     const imprints = data.subsidiaries.filter(s => s.type === 'Founder Imprint');
     const officials = data.subsidiaries.filter(s => s.type === 'Official Subsidiary' || s.type === 'Production Unit');
+
+    const founderGames = imprints.flatMap(s => s.games.map(g => ({ ...g, studioName: s.name, studioOwner: s.owner })));
+
+    const renderGameCard = (game: any) => (
+        <Card
+            key={game.id}
+            onClick={() => navigate(`/games/${game.id}`)}
+            image={game.image}
+            title={game.title}
+            description={game.description}
+            accentColor="emerald"
+            imageClassName="aspect-[16/9]"
+            subtitle={
+                <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                        {(game.genres as string[]).map((genre, idx) => (
+                            <React.Fragment key={genre}>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">{genre}</span>
+                                {idx < (game.genres as string[]).length - 1 && <span className="opacity-30">●</span>}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                    {game.studioOwner && (
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">
+                            Created by {game.id === 'ande-fsaf' ? 'ANdE' : game.studioOwner}
+                        </span>
+                    )}
+                </div>
+            }
+            footer={
+                <div className="flex items-center justify-between w-full">
+                    <StatusBadge status={game.status} />
+                    <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-500`}>
+                        View Details <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                </div>
+            }
+        />
+    );
 
     const renderSubCard = (sub: Subsidiary) => {
         const isFounder = sub.type === 'Founder Imprint';
@@ -120,11 +160,15 @@ const Network: React.FC = () => {
             <section id="founder-projects" className="mb-24">
                 <div className="flex items-center gap-3 mb-8">
                     <User className="w-6 h-6 text-emerald-500" />
-                    <h2 className="text-2xl font-black uppercase tracking-tight">Founder Projects</h2>
+                    <h2 className="text-2xl font-black uppercase tracking-tight">Founder's Projects</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {imprints.map(renderSubCard)}
-                </div>
+                {founderGames.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {founderGames.map(renderGameCard)}
+                    </div>
+                ) : (
+                    <p className="text-gray-500 font-medium italic">No individual projects launched yet.</p>
+                )}
             </section>
 
             {/* Strategic Partners */}

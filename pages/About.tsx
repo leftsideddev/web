@@ -255,8 +255,8 @@ const About: React.FC = () => {
                         {/* Subsidiaries Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                             <FamilyTreeNode name="ANdE Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/ande')} />
-                            <FamilyTreeNode name="Gotch-ya Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/gotchya')} />
-                            <FamilyTreeNode name="Bomb Banana" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/bomb-banana')} />
+                            <FamilyTreeNode name="DaRealSansYT" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/sansytgames')} />
+                            <FamilyTreeNode name="RocketBlasts" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/rocketgames')} />
                             <FamilyTreeNode name="Endgame Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/endgame')} />
                         </div>
 
@@ -293,7 +293,7 @@ const About: React.FC = () => {
                     />
                     <FAQItem 
                         question="What does the development cycle look like?" 
-                        answer="Our process is iterative and collaborative. We leverage our studio ecosystem—including subsidiaries like ANdE and Gotch-ya—to specialize in different genres while maintaining a unified creative vision and high production standards."
+                        answer="Our process is iterative and collaborative. We leverage our studio ecosystem—including subsidiaries like ANdE, DaRealSansYT, and RocketBlasts—to specialize in different genres while maintaining a unified creative vision and high production standards."
                     />
                     <FAQItem 
                         question="How can I get involved with the LSS community?" 

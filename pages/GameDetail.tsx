@@ -15,7 +15,8 @@ const StatusBadge: React.FC<{ status: GameStatus }> = ({ status }) => {
         'Paused': 'bg-amber-500/10 border-amber-500/30 text-amber-400',
         'Alpha': 'bg-purple-500/10 border-purple-500/30 text-purple-400',
         'Beta': 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400',
-        'Canceled': 'bg-red-500/10 border-red-500/30 text-red-400'
+        'Canceled': 'bg-red-500/10 border-red-500/30 text-red-400',
+        'REWORKING': 'bg-neutral-500/10 border-neutral-500/30 text-neutral-400'
     };
 
     return (
@@ -48,8 +49,9 @@ const GameDetail: React.FC = () => {
 
     const isLinkActive = !!game.link;
     const isMainProject = allData.games.some(g => g.id === id);
-    const backPath = isMainProject ? '/games' : (parentSubsidiary ? `/network/${parentSubsidiary.id}` : '/network');
-    const backLabel = isMainProject ? 'Back to Catalog' : (parentSubsidiary ? `Back to ${parentSubsidiary.name}` : 'Back to Network');
+    const specificBackToNetwork = ['ande-fsaf', 'sansyt-sots', 'rkt-eyebo'].includes(id || '');
+    const backPath = specificBackToNetwork ? '/network' : (isMainProject ? '/games' : (parentSubsidiary ? `/network/${parentSubsidiary.id}` : '/network'));
+    const backLabel = specificBackToNetwork ? 'Back to Network' : (isMainProject ? 'Back to Catalog' : (parentSubsidiary ? `Back to ${parentSubsidiary.name}` : 'Back to Network'));
 
     const renderMarkdown = (content: string) => {
         const processedContent = content.replace(/\[img:(.*?)\]/g, '![]($1)');

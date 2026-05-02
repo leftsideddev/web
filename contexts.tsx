@@ -8,13 +8,7 @@ interface DatabaseContextType {
     data: DB; // Filtered for listings/search
     allData: DB; // Unfiltered for direct links
     isSynced: boolean;
-    updateGames: (games: Game[]) => void;
-    updateBlog: (posts: BlogPost[]) => void;
     syncWithCloud: () => Promise<void>;
-    persistToCloud: (newData?: DB) => Promise<boolean>;
-    adminUser: { email: string; name?: string; picture?: string } | null;
-    login: () => Promise<void>;
-    logout: () => void;
 }
 
 export const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined);
@@ -40,18 +34,6 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     });
 
     const [isSynced, setIsSynced] = useState(false);
-    const [adminUser, setAdminUser] = useState<{ email: string; name?: string; picture?: string } | null>(null);
-
-    useEffect(() => {
-        console.log("DatabaseProvider mounted, checking auth status...");
-        fetch("/api/auth/me", { credentials: 'include' })
-            .then(res => res.json())
-            .then(data => {
-                console.log("Auth status check result:", data);
-                if (data.user) setAdminUser(data.user);
-            })
-            .catch(err => console.error("Auth check failed", err));
-    }, []);
 
     const isPublic = (item: { isPublic?: boolean }) => {
         return item.isPublic !== false;
@@ -78,7 +60,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             }))
         };
         return filtered;
-    }, [rawDb, adminUser]);
+    }, [rawDb]);
 
     useEffect(() => {
         localStorage.setItem('lss_database', JSON.stringify(rawDb));
@@ -87,78 +69,6 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     useEffect(() => {
         syncWithCloud();
     }, []);
-
-    const login = async () => {
-        try {
-            console.log("Initiating login flow...");
-            const res = await fetch("/api/auth/url");
-            const { url } = await res.json();
-            
-            const width = 600;
-            const height = 700;
-            const left = window.screenX + (window.outerWidth - width) / 2;
-            const top = window.screenY + (window.outerHeight - height) / 2;
-            
-            const popup = window.open(url, 'google-login', `width=${width},height=${height},left=${left},top=${top}`);
-            
-            if (!popup) {
-                alert("Popup blocked! Please allow popups for this site.");
-                return;
-            }
-
-            const handleMessage = (event: MessageEvent) => {
-                console.log("Received postMessage:", event.data);
-                if (event.data.type === 'OAUTH_AUTH_SUCCESS') {
-                    console.log("Login success message received, fetching user info...");
-                    fetch("/api/auth/me", { credentials: 'include' })
-                        .then(res => res.json())
-                        .then(data => {
-                            console.log("User info after login:", data);
-                            if (data.user) {
-                                setAdminUser(data.user);
-                            } else {
-                                console.warn("Login success but /api/auth/me returned null user.");
-                            }
-                        });
-                    window.removeEventListener('message', handleMessage);
-                } else if (event.data.type === 'OAUTH_AUTH_ERROR') {
-                    console.error("Login error message received:", event.data.error);
-                    alert("Authentication failed: " + event.data.error);
-                    window.removeEventListener('message', handleMessage);
-                }
-            };
-            
-            window.addEventListener('message', handleMessage);
-        } catch (err) {
-            console.error("Login failed", err);
-        }
-    };
-
-    const logout = async () => {
-        console.log("Logging out...");
-        await fetch("/api/auth/logout", { method: 'POST' });
-        setAdminUser(null);
-    };
-
-    const persistToCloud = async (newData?: DB) => {
-        if (!adminUser) return false;
-        const dataToSave = newData || rawDb;
-        try {
-            const res = await fetch(BACKEND_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataToSave)
-            });
-            if (res.ok) {
-                console.log("Database persisted to cloud.");
-                return true;
-            }
-            return false;
-        } catch (err) {
-            console.error("Persistence failed", err);
-            return false;
-        }
-    };
 
     const syncWithCloud = async () => {
         try {
@@ -198,18 +108,8 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     };
 
-    const updateGames = (games: Game[]) => {
-        const newData = { ...rawDb, games };
-        setRawDb(newData);
-    };
-
-    const updateBlog = (posts: BlogPost[]) => {
-        const newData = { ...rawDb, blogPosts: posts };
-        setRawDb(newData);
-    };
-
     return (
-        <DatabaseContext.Provider value={{ data, allData: rawDb, isSynced, updateGames, updateBlog, syncWithCloud, persistToCloud, adminUser, login, logout }}>
+        <DatabaseContext.Provider value={{ data, allData: rawDb, isSynced, syncWithCloud }}>
             {children}
         </DatabaseContext.Provider>
     );

@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://leftsidedstudios.netlify.app/
+Host: https://leftsidedstudios.com/
 
 # Sitemap
-Sitemap: https://leftsidedstudios.netlify.app/sitemap.xml
+Sitemap: https://leftsidedstudios.com/sitemap.xml

@@ -24,10 +24,8 @@ import Contact from './pages/Contact';
 import News from './pages/News';
 import BlogPostPage from './pages/BlogPost';
 import About from './pages/About';
-import Admin from './pages/Admin';
 import Privacy from './pages/Privacy';
 import NotFound from './pages/NotFound';
-import Chatbot from './components/Chatbot';
 
 // --- DATABASE CONTEXT REMOVED (Moved to contexts.tsx) ---
 
@@ -89,7 +87,7 @@ const SearchModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpe
     const inputRef = useRef<HTMLInputElement>(null);
 
     const types = ['All', 'Project', 'Article', 'Studio', 'Partner', 'Site'];
-    const statuses = ['All', 'In Development', 'Released', 'Paused', 'Canceled'];
+    const statuses = ['All', 'In Development', 'Released', 'Paused', 'Canceled', 'REWORKING'];
 
     const genres = useMemo(() => {
         const allGames = [...data.games, ...data.subsidiaries.flatMap(s => s.games)];
@@ -481,7 +479,6 @@ const AnimatedRoutes: React.FC = () => {
                 <Route path="/news/:id" element={<BlogPostPage />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/admin" element={<Admin />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
@@ -530,7 +527,6 @@ const App: React.FC = () => {
                             <AnimatedRoutes />
                         </main>
                         <Footer />
-                        <Chatbot />
                     </div>
                 </BrowserRouter>
             </ThemeProvider>

@@ -17,6 +17,7 @@ const StatusPill: React.FC<{ status?: string }> = ({ status }) => {
         case 'Alpha': colors = 'border-purple-500/50 text-purple-400'; break;
         case 'Beta': colors = 'border-indigo-500/50 text-indigo-400'; break;
         case 'Canceled': colors = 'border-red-500/50 text-red-400'; break;
+        case 'REWORKING': colors = 'border-stone-500/50 text-stone-400'; break;
     }
 
     return (
