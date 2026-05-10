@@ -89,7 +89,7 @@ const Subsidiaries: React.FC = () => {
                     <Zap className="w-12 h-12" />
                 </div>
                 <div className="flex-grow">
-                    <h2 className="text-3xl font-black mb-4 tracking-tight uppercase">Strategic Alignment</h2>
+                    <h2 className="text-3xl font-black mb-4 tracking-tight uppercase">Partnership Ecosystem</h2>
                     <p className="text-gray-500 font-medium text-lg leading-relaxed">
                         Founder labels allow our team members to explore individual artistic visions while maintaining the high quality and resource support of the Left-Sided core.
                     </p>

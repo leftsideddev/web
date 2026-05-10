@@ -21,8 +21,7 @@ async function startServer() {
     app.use(express.json({ limit: '10mb' }));
 
     // --- DB Routes ---
-
-    app.get("/api/db", async (req, res) => {
+    const handleDbRequest = async (req: express.Request, res: express.Response) => {
         const redis = getRedis();
         try {
             const keyType = await redis.type('constants');
@@ -52,7 +51,10 @@ async function startServer() {
         } finally {
             await redis.quit();
         }
-    });
+    };
+
+    app.get("/api/db", handleDbRequest);
+    app.get("/.netlify/functions/db-sync", handleDbRequest);
 
     // --- Vite Middleware ---
 

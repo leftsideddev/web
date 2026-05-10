@@ -171,25 +171,25 @@ const Network: React.FC = () => {
                 )}
             </section>
 
-            {/* Strategic Partners */}
+            {/* Studio Partnerships */}
             <section id="partners" className="mb-24">
                 <div className="flex items-center gap-3 mb-8">
                     <Users className="w-6 h-6 text-blue-500" />
-                    <h2 className="text-2xl font-black uppercase tracking-tight">Strategic Partners</h2>
+                    <h2 className="text-2xl font-black uppercase tracking-tight">Studio Partnerships</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {data.partners.map(renderPartnerCard)}
                 </div>
             </section>
 
-            <section id="alignment" className={`mt-32 p-12 md:p-16 rounded-[3rem] border flex flex-col md:flex-row items-center gap-12 text-center md:text-left ${
+            <section id="partnerships" className={`mt-32 p-12 md:p-16 rounded-[3rem] border flex flex-col md:flex-row items-center gap-12 text-center md:text-left ${
                 isDarkMode ? 'bg-neutral-900 border-white/5' : 'bg-gray-50 border-gray-200'
             }`}>
                 <div className="p-6 rounded-full bg-emerald-500/10 text-emerald-500">
                     <Zap className="w-12 h-12" />
                 </div>
                 <div className="flex-grow">
-                    <h2 className="text-3xl font-black mb-4 tracking-tight uppercase">Strategic Alignment</h2>
+                    <h2 className="text-3xl font-black mb-4 tracking-tight uppercase">Partnership Ecosystem</h2>
                     <p className="text-gray-500 font-medium text-lg leading-relaxed">
                         Founder labels allow our team members to explore individual artistic visions while maintaining the high quality and resource support of the Left-Sided core.
                     </p>

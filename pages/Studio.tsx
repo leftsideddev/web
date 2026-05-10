@@ -163,23 +163,20 @@ const Studio: React.FC = () => {
                         </div>
 
                         <div className="md:col-span-4 flex flex-col items-center">
-                            <div className="mb-4 text-[10px] font-black uppercase tracking-widest text-gray-600 opacity-50">Strategic Alignment</div>
+                            <div className="mb-4 text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 opacity-60">Studio Partnerships</div>
                             <div className="flex flex-col gap-4">
                                 <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" />
-                                <FamilyTreeNode name="Geekza Productions" type="Creative Partner" color="text-blue-500" />
-                            </div>
-                            <div className="w-full flex justify-center py-4" aria-hidden="true">
-                                <div className="h-12 w-px bg-gradient-to-b from-blue-500 to-transparent"></div>
+                                <FamilyTreeNode name="Skullix Media Group" type="Media & Production" color="text-orange-500" isJoint={true} />
+                                <FamilyTreeNode name="Geekza Productions" type="Creative Partner" color="text-emerald-500" />
+                                <FamilyTreeNode name="Industrial Productions" type="Creative Partner" color="text-emerald-500" />
                             </div>
                         </div>
 
                         <div className="md:col-span-12 flex flex-col items-center pt-16 relative">
-                            <div className="absolute top-0 left-1/4 right-1/4 h-16 border-t-2 border-x-2 border-dashed border-white/10 rounded-t-[3rem] -mt-2" aria-hidden="true"></div>
                             <div className="flex items-center gap-3 mb-6">
-                                <Share2 className="w-4 h-4 text-orange-500" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Shared Production Unit</span>
+                                <Share2 className="w-4 h-4 text-emerald-500" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Shared Production Resources</span>
                             </div>
-                            <FamilyTreeNode name="Skullix Media Group" type="Media & Production" color="text-orange-500" isJoint={true} />
                         </div>
                     </div>
                 </div>

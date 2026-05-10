@@ -244,7 +244,7 @@ If changes are significant, we will make reasonable efforts to notify you throug
 
 If you have any questions, concerns, requests, or complaints regarding this Privacy Policy or our data practices, please reach out to us. We take privacy matters seriously and will do our best to respond in a timely and helpful manner.
 
-**Preferred contact method:** leftsidedstudios@gmail.com
+**Preferred contact method:** contact@leftsidedstudios.com
 
 > We aim to respond to all privacy-related inquiries within **30 days** of receipt.
 
@@ -298,7 +298,7 @@ If you have any questions, concerns, requests, or complaints regarding this Priv
                         </p>
                     </div>
                     <a 
-                        href="mailto:leftsidedstudios@gmail.com" 
+                        href="mailto:contact@leftsidedstudios.com" 
                         className="flex items-center gap-4 bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-sm transition-all shadow-xl shadow-emerald-500/20 active:scale-95 group"
                     >
                         <Mail className="w-5 h-5" /> Email Us Directly

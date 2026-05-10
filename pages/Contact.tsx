@@ -25,7 +25,7 @@ const Contact: React.FC = () => {
         const encodedSubject = encodeURIComponent(`LSS Website Inquiry: ${subject}`);
         const encodedBody = encodeURIComponent(emailBody);
         
-        const mailtoLink = `mailto:leftsidedstudios@gmail.com?subject=${encodedSubject}&body=${encodedBody}`;
+        const mailtoLink = `mailto:contact@leftsidedstudios.com?subject=${encodedSubject}&body=${encodedBody}`;
         const link = document.createElement('a');
         link.href = mailtoLink;
         link.click();
@@ -47,6 +47,16 @@ const Contact: React.FC = () => {
                         <Zap className="w-4 h-4" /> Official Channels
                     </h2>
                     <div className="flex flex-col gap-4 flex-grow">
+                        <div className={`group flex items-start gap-4 p-8 rounded-[2rem] border transition-all flex-1 ${isDarkMode ? 'bg-neutral-900/50 border-white/5 hover:border-emerald-500/30' : 'bg-white border-gray-100 shadow-sm hover:border-emerald-500'}`}>
+                            <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500 group-hover:scale-110 transition-transform flex-shrink-0">
+                                <Zap className="w-6 h-6" />
+                            </div>
+                            <div className="flex flex-col justify-center">
+                                <h3 className={`text-xl font-black mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Official Support</h3>
+                                <p className="text-gray-500 text-sm mb-4 font-medium">For technical issues, bug reports, or project help.</p>
+                                <a href="mailto:support@leftsidedstudios.com" className="text-emerald-500 font-black uppercase text-[10px] tracking-widest hover:underline mt-auto">support@leftsidedstudios.com</a>
+                            </div>
+                        </div>
                         <div className={`group flex items-start gap-4 p-8 rounded-[2rem] border transition-all flex-1 ${isDarkMode ? 'bg-neutral-900/50 border-white/5 hover:border-blue-500/30' : 'bg-white border-gray-100 shadow-sm hover:border-blue-500'}`}>
                             <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500 group-hover:scale-110 transition-transform flex-shrink-0">
                                 <Mail className="w-6 h-6" />
@@ -54,7 +64,7 @@ const Contact: React.FC = () => {
                             <div className="flex flex-col justify-center">
                                 <h3 className={`text-xl font-black mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>General Inquiries</h3>
                                 <p className="text-gray-500 text-sm mb-4 font-medium">For partnerships, press, or business matters.</p>
-                                <a href="mailto:leftsidedstudios@gmail.com" className="text-blue-500 font-black uppercase text-[10px] tracking-widest hover:underline mt-auto">leftsidedstudios@gmail.com</a>
+                                <a href="mailto:contact@leftsidedstudios.com" className="text-blue-500 font-black uppercase text-[10px] tracking-widest hover:underline mt-auto">contact@leftsidedstudios.com</a>
                             </div>
                         </div>
                         <div className={`group flex items-start gap-4 p-8 rounded-[2rem] border transition-all flex-1 ${isDarkMode ? 'bg-neutral-900/50 border-white/5 hover:border-purple-500/30' : 'bg-white border-gray-100 shadow-sm hover:border-purple-500'}`}>

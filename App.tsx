@@ -443,7 +443,7 @@ const Footer: React.FC = () => {
                     <ul className="space-y-4 text-xs font-black uppercase tracking-widest text-gray-500">
                         <li><Link to="/news" className="hover:text-amber-500 transition-colors">News Hub</Link></li>
                         <li><Link to="/about#press" className="hover:text-amber-500 transition-colors">Press Assets</Link></li>
-                        <li><a href="https://discord.gg/A8XMvSnkCU" className="hover:text-amber-500 transition-colors">Inquiries</a></li>
+                        <li><a href="mailto:contact@leftsidedstudios.com" className="hover:text-amber-500 transition-colors">Inquiries</a></li>
                         <li><a href="https://sites.google.com/view/leftsidedstudios/" target="_blank" className="hover:text-amber-500 transition-colors">Legacy Site</a></li>
                     </ul>
                 </div>
@@ -454,7 +454,7 @@ const Footer: React.FC = () => {
                     &copy; 2023-2026 Left-Sided Studios
                 </div>
                 <div className="flex gap-8">
-                    <Link to="/contact" className="text-gray-600 hover:text-emerald-500 transition-colors text-[10px] font-black uppercase tracking-widest">Support</Link>
+                    <a href="mailto:support@leftsidedstudios.com" className="text-gray-600 hover:text-emerald-500 transition-colors text-[10px] font-black uppercase tracking-widest">Support</a>
                     <Link to="/privacy" className="text-gray-600 hover:text-emerald-500 transition-colors text-[10px] font-black uppercase tracking-widest">Privacy Policy</Link>
                 </div>
             </div>

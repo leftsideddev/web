@@ -3,7 +3,19 @@
   publish = "dist"
   functions = "functions"
 
+# Redirect .netlify.app → custom domain
+[[redirects]]
+  from = "https://leftsidedstudios.netlify.app/*"
+  to = "https://leftsidedstudios.com/:splat"
+  status = 301
+  force = true
+
 # Handle SPA routing: redirect all requests to index.html
+[[redirects]]
+  from = "/.netlify/*"
+  to = "/.netlify/:splat"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

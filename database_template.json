@@ -392,7 +392,7 @@
       "description": "Collaborating on shared development goals.",
       "fullText": "A strategic alliance reached in August 2025 to expand the reach and infrastructure of indie projects.",
       "image": "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/cs_banner.png?raw=true",
-      "website": "https://citadelstudios.netlify.app/",
+      "website": "https://citadelservers.online/",
       "tags": ["Development", "Infrastructure", "Horror"],
       "isPublic": true
     },
@@ -404,6 +404,16 @@
       "fullText": "Geekza Productions is a small studio dedicated to crafting unique indie games and compelling short films. Based in the real world, they focus on storytelling and creative expression across digital and cinematic mediums.",
       "image": "https://github.com/leftsideddev/web/blob/main/images/studios/geekzaproductions.png?raw=true",
       "tags": ["Indie Games", "Short Films", "Creative"],
+      "isPublic": true
+    },
+    {
+      "id": "industrial",
+      "name": "Industrial Productions",
+      "type": "Creative Partner",
+      "description": "Creators of FNaF: Corrupt Company and FNaF: Backstage Minecraft mod.",
+      "fullText": "Industrial Productions is the studio behind \"FNaF : CORRUPT COMPANY\" and \"FNaF : Backstage\", our minecraft mod. Although the studio may seem FNaF focused, more projects based around other IPs are coming soon!",
+      "image": "https://github.com/leftsideddev/web/blob/main/images/studios/industrialproductions.png?raw=true",
+      "tags": ["FNaF", "Minecraft", "Indie Games"],
       "isPublic": true
     }
   ]

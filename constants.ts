@@ -1,8 +1,8 @@
 
 import { DB } from './types';
 
-// Points to our local server API
-export const BACKEND_URL = "/api/db";
+// Points to our database sync function
+export const BACKEND_URL = "/.netlify/functions/db-sync";
 
 // constants.ts
 export const LSS_LOGO_DARK = "https://github.com/leftsideddev/web/blob/main/images/lss_neo.png?raw=true";
@@ -14,7 +14,7 @@ export const SPOTLIGHT_COLUMN_MAX_WIDTH = "448px"; // Equivalent to lg:max-w-md
 export const SPOTLIGHT_COLUMN_XL_MAX_WIDTH = "512px"; // Equivalent to xl:max-w-lg
 
 export const db: DB = {
-    version: 5,
+    version: 7,
     about: {
         title: "Welcome to Left-Sided Studios",
         subtitle: "Explore our creations, updates, and more!",
@@ -380,10 +380,10 @@ export const db: DB = {
             id: "citadel",
             name: "Citadel Studios",
             type: "Strategic Partner",
-            description: "Collaborating on shared development goals.",
-            fullText: "A strategic alliance reached in August 2025 to expand the reach and infrastructure of indie projects.",
+            description: "Collaborating on shared goals through professional partnerships.",
+            fullText: "A strategic partnership reached in August 2025 to expand the reach and infrastructure of indie projects.",
             image: "https://raw.githubusercontent.com/leftsideddev/web/main/images/studios/cs_banner.png?raw=true",
-            website: "https://citadelstudios.netlify.app/",
+            website: "https://citadelservers.online/",
             tags: ["Development", "Infrastructure", "Horror"],
             isPublic: true
         },
@@ -395,6 +395,16 @@ export const db: DB = {
             fullText: "Geekza Productions is a small studio dedicated to crafting unique indie games and compelling short films. Based in the real world, they focus on storytelling and creative expression across digital and cinematic mediums.",
             image: "https://github.com/leftsideddev/web/blob/main/images/studios/geekzaproductions.png?raw=true",
             tags: ["Indie Games", "Short Films", "Creative"],
+            isPublic: true
+        },
+        {
+            id: "industrial",
+            name: "Industrial Productions",
+            type: "Creative Partner",
+            description: "Creators of FNaF: Corrupt Company and FNaF: Backstage Minecraft mod.",
+            fullText: "Industrial Productions is the studio behind \"FNaF : CORRUPT COMPANY\" and \"FNaF : Backstage\", our minecraft mod. Although the studio may seem FNaF focused, more projects based around other IPs are coming soon!",
+            image: "https://github.com/leftsideddev/web/blob/main/images/studios/industrialproductions.png?raw=true",
+            tags: ["FNaF", "Minecraft", "Indie Games"],
             isPublic: true
         }
     ]

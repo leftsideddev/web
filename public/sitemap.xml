@@ -95,6 +95,16 @@
         <priority>0.6</priority>
     </url>
     <url>
+        <loc>https://leftsidedstudios.com/partners/geekza</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://leftsidedstudios.com/partners/industrial</loc>
+        <lastmod>2026-02-22</lastmod>
+        <priority>0.6</priority>
+    </url>
+    <url>
         <loc>https://leftsidedstudios.com/news</loc>
         <lastmod>2026-02-22</lastmod>
         <changefreq>daily</changefreq>

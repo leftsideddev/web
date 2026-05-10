@@ -260,20 +260,15 @@ const About: React.FC = () => {
                             <FamilyTreeNode name="Endgame Studios" type="Subsidiary" color="text-purple-500" onClick={() => navigate('/network/endgame')} />
                         </div>
 
-                        {/* Strategic Partners Row */}
-                        <div className="w-full flex flex-col md:flex-row items-center justify-center mt-8 gap-8 md:gap-32">
-                             <div className="flex flex-col items-center">
-                                <div className="mb-4 text-[10px] font-black uppercase tracking-widest text-blue-500 opacity-60">Strategic Alignment</div>
-                                <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" onClick={() => navigate('/partners/citadel')} />
-                             </div>
+                        {/* Partnerships Row */}
+                        <div className="w-full flex flex-col items-center justify-center mt-8 gap-12">
+                             <div className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 opacity-60">Studio Partnerships</div>
                              
-                             <div className="flex flex-col items-center relative">
-                                <div className="hidden md:block absolute -top-8 left-1/2 -translate-x-1/2 h-8 w-px border-l border-dashed border-white/20" aria-hidden="true"></div>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <Share2 className="w-4 h-4 text-orange-500" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Shared Production</span>
-                                </div>
+                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-5xl place-items-center">
+                                <FamilyTreeNode name="Citadel Studios" type="Strategic Partner" color="text-blue-500" onClick={() => navigate('/partners/citadel')} />
                                 <FamilyTreeNode name="Skullix Media Group" type="Media & Production" color="text-orange-500" isJoint={true} onClick={() => navigate('/network/skullix')} />
+                                <FamilyTreeNode name="Geekza Productions" type="Creative Partner" color="text-emerald-500" onClick={() => navigate('/partners/geekza')} />
+                                <FamilyTreeNode name="Industrial Productions" type="Creative Partner" color="text-emerald-500" onClick={() => navigate('/partners/industrial')} />
                              </div>
                         </div>
 
@@ -301,7 +296,7 @@ const About: React.FC = () => {
                     />
                     <FAQItem 
                         question="Does LSS work with other studios?" 
-                        answer="Yes, we maintain strategic alignments with partners like Citadel Studios to co-produce high-fidelity content and expand our production capabilities across the indie landscape."
+                        answer="Yes, we maintain active partnerships with studios like Citadel, Skullix, and Geekza to co-produce content and expand our production capabilities across the indie landscape."
                     />
                 </div>
             </FadeInSection>

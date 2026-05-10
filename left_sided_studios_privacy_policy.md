@@ -234,7 +234,7 @@ If changes are significant, we will make reasonable efforts to notify you throug
 
 If you have any questions, concerns, requests, or complaints regarding this Privacy Policy or our data practices, please reach out to us. We take privacy matters seriously and will do our best to respond in a timely and helpful manner.
 
-**Preferred contact method:** leftsidedstudios@gmail.com
+**Preferred contact method:** contact@leftsidedstudios.com
 
 > We aim to respond to all privacy-related inquiries within **30 days** of receipt.
 
